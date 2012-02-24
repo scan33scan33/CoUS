@@ -1,0 +1,234 @@
+<html>
+<head>
+<title>Counting on US</title>
+<script type='text/javascript' src='https://www.google.com/jsapi'></script>
+<link href="http://www.aiksee.com/~minghen/style.css" rel="stylesheet" type="text/css" />
+<link href='http://fonts.googleapis.com/css?family=Fredericka+the+Great' rel='stylesheet' type='text/css'>
+   <script type="text/javascript"
+src="https://www.google.com/jsapi"></script>
+
+</head>
+<body>
+
+<div id="page_container">
+	<div id="title">
+		<!--
+		<img alt="Counting on US" src="images/logo.png" height="100px"/>
+		-->
+		<img alt="Counting on US" src="http://www.aiksee.com/~minghen/logo.png" height="100px"/>
+		Counting on US</div>
+<div id="individual">
+<div id="you">
+You
+<form id="you_form" action="index" method="post">
+	
+<select name="yourstate" onchange="submit();">
+{% for state in statelist %}
+{% if yourstate == state %}
+<option value="{{state}}" selected>{{state}}</option>
+{% else %}
+<option value="{{state}}" >{{state}}</option>
+{% endif %}
+{% endfor %}
+</select>
+<!--
+<select name="yourgender" onchange="submit();">
+{% for gender in genderlist %}
+{% if yourgender == gender %}
+<option value="{{gender}}" selected>{{gender}}</option>
+{% else %}
+<option value="{{gender}}" >{{gender}}</option>
+{% endif %}
+{% endfor %}
+</select>
+-->
+<select name="yourrace" onchange="submit();">
+{% for race in racelist %}
+{% if yourrace == race %}
+<option value="{{race}}" selected>{{race}}</option>
+{% else %}
+<option value="{{race}}" >{{race}}</option>
+{% endif %}
+{% endfor %}
+</select>
+
+<select name="yourfocus" onchange="submit();">
+{% for subfocus in subfocuslist %}
+{% if yourfocus == subfocus %}
+<option value="{{subfocus}}" selected>{{subfocus}}</option>
+{% else %}
+<option value="{{subfocus}}">{{subfocus}}</option>
+{% endif %}
+{% endfor %}
+</select>
+
+
+
+<!--
+</form>
+-->
+</div>
+<div id="graphs">
+   <script type="text/javascript">
+     google.load("visualization", "1", {packages:["corechart"]});
+     google.setOnLoadCallback(drawChart);
+     function drawChart() {
+       var data = new google.visualization.DataTable();
+       data.addColumn('string', 'Concern');
+       data.addColumn('number', 'Me');
+       data.addColumn('number', 'You');
+       data.addRows([
+    	{% for bar in bars%}
+	['{{bar.0}}', {{bar.1}},{{bar.2}}],
+       	{% endfor  %}
+       ]);
+
+       var options = {
+         width: 400, height: 240,
+         title: 'Counting On US',
+         vAxis: {title: 'Concern',  titleTextStyle: {color: 'red'}}
+       };
+
+       var chart = new
+google.visualization.BarChart(document.getElementById('chart_div'));
+
+       chart.draw(data, options);
+     }
+   </script>
+ <div id="chart_div"></div>
+</div>
+
+
+<div id="friend">Friend<br/>
+<!--	
+<form id="you_form">
+	-->	
+<select name="itsstate" action="index" onchange="submit();">
+{% for state in statelist %}
+{% if itsstate == state %}
+<option value="{{state}}" selected>{{state}}</option>
+{% else %}
+<option value="{{state}}" >{{state}}</option>
+{% endif %}
+{% endfor %}
+</select>
+<!--
+<select name="itsgender" onchange="submit();">
+{% for gender in genderlist %}
+{% if itsgender == gender %}
+<option value="{{gender}}" selected>{{gender}}</option>
+{% else %}
+<option value="{{gender}}" >{{gender}}</option>
+{% endif %}
+{% endfor %}
+</select>
+-->
+<select name="itsrace" onchange="submit();">
+{% for race in racelist %}
+{% if itsrace == race %}
+<option value="{{race}}" selected>{{race}}</option>
+{% else %}
+<option value="{{race}}" >{{race}}</option>
+{% endif %}
+{% endfor %}
+</select>
+</form>
+</div>
+
+<div id="sep"></div>
+
+</div>
+
+
+
+<div id="us">
+<div id="category">
+	Category - {{yourfocus}}
+</div>
+<div id="map">
+<div id="map_container">
+  <script type='text/javascript'>
+   google.load('visualization', '1', {'packages': ['geochart']});
+   google.setOnLoadCallback(drawMarkersMap);
+
+    function drawMarkersMap() {
+    var data = new google.visualization.DataTable();
+    data.addColumn('string', 'State');
+    data.addColumn('number', '24-1b Deaths from asthma ...');
+    data.addRows([ 
+		    {% for subfocus in subfocuses %}
+		    ['{{subfocus.0}}' , {{subfocus.1}}],
+		    {% endfor %}
+    		    ]);
+/*
+    data.addRows([
+['Alaska', 17.5],
+['Arizona', 2.6],
+['Arkansas', 3.9],
+['California', 0.033333333333333],
+['Colorado', 1.5333333333333],
+['Connecticut', 2.05],
+['Delaware', 18.3],
+['District of Columbia', 29],
+['Florida', 1],
+['Georgia', 0.1],
+['Illinois', 1.8666666666667],
+['Indiana', 1.7666666666667],
+['Iowa', 3.3333333333333],
+['Kansas', 3.95],
+['Kentucky', 2.8666666666667],
+['Louisiana', 1.1],
+['Maryland', 2.4],
+['Massachusetts', 0.1],
+['Michigan', 1.2666666666667],
+['Minnesota', 14.5],
+['Mississippi', 6.9666666666667],
+['Missouri', 4.1333333333333],
+['Montana', 4.8],
+['Nebraska', 0.85],
+['Nevada', 6],
+['New Hampshire', 11.1],
+['New Jersey', 0.96666666666667],
+['New Mexico', 0.63333333333333],
+['New York', 1.8],
+['North Carolina', 0.26666666666667],
+['Ohio', 4.6],
+['Oklahoma', 1.6],
+['Oregon', 1.4333333333333],
+['Pennsylvania', 5.45],
+['Rhode Island', 3.15],
+['South Carolina', 0.13333333333333],
+['Tennessee', 1.1666666666667],
+['Texas', 1.7666666666667],
+['Utah', 3.5333333333333],
+['Virginia', 3.5666666666667],
+['Washington', 3.9],
+['West Virginia', 6.1333333333333],
+['Wisconsin', 1.7]
+    ]);
+*/
+    var options = {
+      region: 'US',
+      resolution: 'provinces',
+      displayMode: 'regions',
+      colorAxis: {colors: ['yellow', 'red'],
+      width: 556,
+      height: 347}
+    };
+
+    var chart = new google.visualization.GeoChart(document.getElementById('map_div'));
+    chart.draw(data, options);
+  };
+  </script>
+<div id="map_div"></div>
+</div>
+</div>
+</div>
+<div id="footer">
+Counting on US - Making public health data personal - health2dev challenge - 2012
+</div>
+
+</div>
+
+</body>
+</html>

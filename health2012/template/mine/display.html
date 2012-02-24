@@ -1,0 +1,90 @@
+<html>
+<head>
+ <script type='text/javascript' src='https://www.google.com/jsapi
+'></script>
+ <script type='text/javascript'>
+  google.load('visualization', '1', {'packages': ['geochart']});
+  google.setOnLoadCallback(drawMarkersMap);
+
+   function drawMarkersMap() {
+   var data = new google.visualization.DataTable();
+   data.addColumn('string', 'State');
+   data.addColumn('number', 'Population');
+   data.addColumn('number', 'Area');
+   data.addRows([
+     ['Alabama', 2761477, 1285.31],
+     ['Oregon', 1800000, 250.31],
+     ['Mississippi', 371282, 102.41]
+   ]);
+
+   var options = {
+     region: 'US',
+     resolution: 'provinces',
+     displayMode: 'regions',
+     colorAxis: {colors: ['green', 'blue'],
+     width: 556,
+     height: 347}
+   };
+
+   var chart = new
+google.visualization.GeoChart(document.getElementById('chart_div'));
+   chart.draw(data, options);
+ };
+ </script>
+</head>
+<body>
+ <div id='chart_div'></div>
+
+People:
+<table width=60%>
+{% for data in alldatat %}
+<tr>
+{% for item in data %}
+<td>
+{{ item }}
+</td>
+{% endfor %}
+</tr>
+{% endfor %}
+</table>
+
+<br/>
+Summaries:
+<table width=80%>
+{% for name in names %}
+<tr>
+<td>
+Summary of {{ name }}
+</td>
+<td>
+Health Concern
+</td>
+<td>
+Risk
+</td>
+<td>
+Information
+</td>
+</tr>
+
+<tr>
+<td>
+Low Risk
+</td>
+<td>
+Diabetes
+</td>
+<td>
+50%/70%
+</td>
+<td>
+Cares,
+Information,
+etc
+</td>
+</tr>
+
+{% endfor %}
+</table>
+</body>
+</html>

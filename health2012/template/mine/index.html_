@@ -1,0 +1,64 @@
+<html>
+<head>
+<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
+<title>Health 2012</title>
+<script>
+/*
+var ntb=0;
+function addfriend(){
+	//alert(ntb);
+	ntb = ntb + 1;
+	$('#div1').append('\
+<table>\
+<tr>\
+<th rowspan="5">Friend' + ntb + ' Name: <br/> <input type="text" name="name' +ntb +'" value="John Smith"></input> </th><td></td><td></td>\
+</tr>\
+{% for k, v in attrmap.iteritems %}\
+<tr>\
+<td> {{ k }}   </td>\
+<td>\
+<select name="{{k}}'+ntb+'">\
+{% for option in v %}\
+<option value="{{option}}" name="{{k}}'+ntb+'">\
+{{ option }}\
+</option>\
+{% endfor %}\
+</select>\
+</td>\
+</tr>\
+{% endfor %}\
+</table>\
+');
+*/
+//	alert('ENd of the function');
+}
+//$('#form1').append('<tr><td>my data</td><td>more data</td></tr>');
+</script>
+</head>
+<body bgcolor=''>
+<center>
+<h2>Counting On US</h2>
+<form action='index' method='POST'>
+
+
+<select name="yourstate" selected="{{yourstate}}">
+{% for state in statelist %}
+<option value="{{state}}">{{state}}</option>
+{% endfor %}
+</select>
+
+<select name="itsstate" selected="{{itsstate}}">
+{% for state in statelist %}
+<option value="{{state}}">{{state}}</option>
+{% endfor %}
+</select>
+
+
+
+
+
+<input type='submit' />
+</form>
+</center>
+</body>
+</html>
