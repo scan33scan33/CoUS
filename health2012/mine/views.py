@@ -5,6 +5,8 @@ from django import forms
 from django.shortcuts import render_to_response
 import re
 import csv
+from django.core import serializers
+
 
 def index(request):
 #    latest_poll_list = Poll.objects.all().order_by('-pub_date')[:5]
@@ -17,7 +19,7 @@ def index(request):
     
     arrs = []
 #    spamReader = csv.reader(open('/home/minghen/django/health2012/media/CountingOnUSData.csv', 'rb'), delimiter=',', quotechar='"')
-    spamReader = csv.reader(open('/home/minghen/django/health2012/media/data.csv', 'rb'), delimiter=',', quotechar='"')
+    spamReader = csv.reader(open('media/data.csv', 'rb'), delimiter=',', quotechar='"')
     for row in spamReader:
         arrs.append(row)
     #arrs = map(lambda x : re.sub('"','',x).strip().split(','),open('/home/minghen/django/health2012/media/CountingOnUSData.csv').readlines())
@@ -139,12 +141,19 @@ def index(request):
     c = Context({"yourstate":yourstate, "itsstate" : itsstate, "yourgender" : yourgender, "itsgender" : itsgender, "youredu" : youredu, "itsedu":itsedu, "yourrace": yourrace, "itsrace" : itsrace,'statelist' : statelist, 'racelist' : racelist, 'genderlist' : genderlist, 'edulist':edulist, "bars" : bars, "subfocuslist" : subfocuslist, "subfocuses" : subfocuses, "yourfocus" : yourfocus})
     return HttpResponse(t.render(c))
 
+def field_filter(request):
+    if request.method == 'POST':
+        field = request.POST['field']
+        val = request.POST['val']
+        print (field, val)
+        return HttpResponse('field_filter: Received!')
+    return HttpResponse('Incorrect Http Method.')
 
-
-
-
-
-
+def ajax_handler(request):
+    if request.method == 'POST':
+        print request.POST
+        return HttpResponse('ajax_handler: Received!')
+    return HttpResponse('Incorrect Http Method.')
 
 #The function is useless
 def display(request):

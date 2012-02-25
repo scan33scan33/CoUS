@@ -2,10 +2,104 @@
 <head>
 <title>Counting on US</title>
 <script type='text/javascript' src='https://www.google.com/jsapi'></script>
+<script type='text/javascript' src='http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js'></script>
 <link href="http://www.aiksee.com/~minghen/style.css" rel="stylesheet" type="text/css" />
 <link href='http://fonts.googleapis.com/css?family=Fredericka+the+Great' rel='stylesheet' type='text/css'>
-   <script type="text/javascript"
-src="https://www.google.com/jsapi"></script>
+
+<script type="text/javascript">
+      google.load('visualization', '1.0', {'packages':['corechart']});
+</script>
+
+<script type="text/javascript">
+$.ajaxSetup({ 
+     beforeSend: function(xhr, settings) {
+         function getCookie(name) {
+             var cookieValue = null;
+             if (document.cookie && document.cookie != '') {
+                 var cookies = document.cookie.split(';');
+                 for (var i = 0; i < cookies.length; i++) {
+                     var cookie = jQuery.trim(cookies[i]);
+                 if (cookie.substring(0, name.length + 1) == (name + '=')) {
+                     cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                     break;
+                 }
+             }
+         }
+         return cookieValue;
+         }
+         if (!(/^http:.*/.test(settings.url) || /^https:.*/.test(settings.url))) {
+             xhr.setRequestHeader("X-CSRFToken", getCookie('csrftoken'));
+         }
+     } 
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){
+(function($){
+	var hook = {
+		onDocumentReady: function(){
+			var self = hook;
+			$('select').each(function(index){
+				$(this).change(function(){
+					var s = $(this);
+					var sChange = new Object();
+					sChange.field = s.attr('name');
+					sChange.val = s.val();
+					self.sendChange(sChange);
+					self.sendData();
+				});
+			google.setOnLoadCallback(self.drawChart);
+			});
+		}, // End of onDocumentReady
+		sendChange: function(sChange){
+			var self = hook;
+			$.post('field_filter', sChange, function(rData){
+				console.log(rData);
+			});
+		}, // End of sendChange
+		sendData: function(){
+			var self = hook;
+			sData = $('#you_form').serialize();
+			$.post('ajax_handler', sData, function(rData){
+				console.log(rData);
+			});
+		}, // End of sendData
+		drawChart: function(){
+			var self = hook;
+			console.log('drawChart');
+			var data = new google.visualization.DataTable();
+			data.addColumn('string', 'Concern');
+			data.addColumn('number', 'Me');
+			data.addColumn('number', 'You');
+			data.addRows([
+				{% for bar in bars%}
+				['{{bar.0}}', {{bar.1}},{{bar.2}}],
+				{% endfor  %}
+			]);
+
+			var options = {
+				width: 400, height: 240,
+				title: 'Counting On US',
+				animation:{ duration: 1000, easing: 'out' },
+				vAxis: {title: 'Concern',  titleTextStyle: {color: 'red'}}
+			};
+			var chart = new google.visualization.BarChart(document.getElementById('chart_div'));
+			chart.draw(data, options);
+		}, // End of drawChart
+	}; // End of hook
+	Pane = {
+		hook: hook,
+		onDocumentReady: function(){
+			var self = Pane;
+			self.hook.onDocumentReady();
+			google.setOnLoadCallback(self.hook.drawChart);
+		},
+	}
+	Pane.onDocumentReady();
+})(jQuery);
+});
+</script>
 
 </head>
 <body>
@@ -22,7 +116,7 @@ src="https://www.google.com/jsapi"></script>
 You
 <form id="you_form" action="index" method="post">
 	
-<select name="yourstate" onchange="submit();">
+<select name="yourstate">
 {% for state in statelist %}
 {% if yourstate == state %}
 <option value="{{state}}" selected>{{state}}</option>
@@ -42,7 +136,7 @@ You
 {% endfor %}
 </select>
 -->
-<select name="yourrace" onchange="submit();">
+<select name="yourrace">
 {% for race in racelist %}
 {% if yourrace == race %}
 <option value="{{race}}" selected>{{race}}</option>
@@ -52,7 +146,7 @@ You
 {% endfor %}
 </select>
 
-<select name="yourfocus" onchange="submit();">
+<select name="yourfocus">
 {% for subfocus in subfocuslist %}
 {% if yourfocus == subfocus %}
 <option value="{{subfocus}}" selected>{{subfocus}}</option>
@@ -69,33 +163,7 @@ You
 -->
 </div>
 <div id="graphs">
-   <script type="text/javascript">
-     google.load("visualization", "1", {packages:["corechart"]});
-     google.setOnLoadCallback(drawChart);
-     function drawChart() {
-       var data = new google.visualization.DataTable();
-       data.addColumn('string', 'Concern');
-       data.addColumn('number', 'Me');
-       data.addColumn('number', 'You');
-       data.addRows([
-    	{% for bar in bars%}
-	['{{bar.0}}', {{bar.1}},{{bar.2}}],
-       	{% endfor  %}
-       ]);
-
-       var options = {
-         width: 400, height: 240,
-         title: 'Counting On US',
-         vAxis: {title: 'Concern',  titleTextStyle: {color: 'red'}}
-       };
-
-       var chart = new
-google.visualization.BarChart(document.getElementById('chart_div'));
-
-       chart.draw(data, options);
-     }
-   </script>
- <div id="chart_div"></div>
+<div id="chart_div"></div>
 </div>
 
 
@@ -103,7 +171,7 @@ google.visualization.BarChart(document.getElementById('chart_div'));
 <!--	
 <form id="you_form">
 	-->	
-<select name="itsstate" action="index" onchange="submit();">
+<select name="itsstate" action="index">
 {% for state in statelist %}
 {% if itsstate == state %}
 <option value="{{state}}" selected>{{state}}</option>
@@ -123,7 +191,7 @@ google.visualization.BarChart(document.getElementById('chart_div'));
 {% endfor %}
 </select>
 -->
-<select name="itsrace" onchange="submit();">
+<select name="itsrace">
 {% for race in racelist %}
 {% if itsrace == race %}
 <option value="{{race}}" selected>{{race}}</option>
