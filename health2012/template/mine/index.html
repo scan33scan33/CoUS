@@ -8,6 +8,7 @@
 
 <script type="text/javascript">
       google.load('visualization', '1.0', {'packages':['corechart']});
+      google.load('visualization', '1.0', {'packages': ['geochart']});
 </script>
 
 <script type="text/javascript">
@@ -51,16 +52,11 @@ $(document).ready(function(){
 				});
 			});
 
-			// Global variables
+			// Global chart variables
 			chart = new google.visualization.BarChart(document.getElementById('chart_div'));
 			chartData = new google.visualization.DataTable(); // Global: Use for updating chart
-			options = {
-				width: 400, height: 240,
-				title: 'Counting On US',
-				animation:{ duration: 500, easing: 'in' },
-				vAxis: {title: 'Concern',  titleTextStyle: {color: 'red'}}
-			};
-
+			geoChart = new google.visualization.GeoChart(document.getElementById('map_div'));
+			geochartData = new google.visualization.DataTable();
 		}, // End of onDocumentReady
 		sendChange: function(sChange){
 			var self = hook;
@@ -75,28 +71,56 @@ $(document).ready(function(){
 				console.log(rData);
 			});
 		}, // End of sendData
-		updateChart: function(data){
-			var self = hook;
-			chartData.removeRows(0, chartData.getNumberOfRows());
-			var testData = ['TEST', 1000, 2000];
-			chartData.addRows([testData]);
-			chart.draw(chartData, options);
-
-		}, // End of updateChart
 		initChart: function(){
 			var self = hook;
-			console.log('initChart');
 			chartData.addColumn('string', 'Concern');
 			chartData.addColumn('number', 'Me');
 			chartData.addColumn('number', 'You');
-			chartData.addRows([
-				{% for bar in bars%}
-				['{{bar.0}}', {{bar.1}},{{bar.2}}],
-				{% endfor  %}
-			]);
-
-			chart.draw(chartData, options);
+			var initData = [
+					{% for bar in bars%}
+					['{{bar.0}}', {{bar.1}},{{bar.2}}],
+					{% endfor  %}
+				       ];
+			self.updateChart(initData);
 		}, // End of initChart
+		updateChart: function(data){
+			var self = hook;
+			var options = {
+				width: 400, height: 240,
+				title: 'Counting On US',
+				animation:{ duration: 800, easing: 'in' },
+				vAxis: {title: 'Concern',  titleTextStyle: {color: 'red'}}
+			};
+			chartData.removeRows(0, chartData.getNumberOfRows());
+			chartData.addRows(data);
+			chart.draw(chartData, options);
+
+		}, // End of updateChart
+		initGeochart: function(){
+			var self = hook;	      
+			geochartData.addColumn('string', 'State');
+			geochartData.addColumn('number', '24-1b Deaths from asthma ...');
+			var initData = [
+					  {% for subfocus in subfocuses %}
+					  ['{{subfocus.0}}' , {{subfocus.1}}],
+					  {% endfor %}
+				       ];
+			self.updateGeochart(initData);
+		}, // End of initGeochart
+		updateGeochart: function(data){
+			var self = hook;	
+			var options = {
+				region: 'US',
+			        resolution: 'provinces',
+			        displayMode: 'regions',
+			        colorAxis: {colors: ['yellow', 'red'],
+			        width: 556,
+			        height: 347}
+			};
+			geochartData.removeRows(0, geochartData.getNumberOfRows());
+			geochartData.addRows(data);
+			geoChart.draw(geochartData, options);
+		},
 	}; // End of hook
 	Pane = {
 		hook: hook,
@@ -104,6 +128,7 @@ $(document).ready(function(){
 			var self = Pane;
 			self.hook.onDocumentReady();
 			google.setOnLoadCallback(self.hook.initChart);
+			google.setOnLoadCallback(self.hook.initGeochart);
 		},
 	}
 	Pane.onDocumentReady();
@@ -225,79 +250,7 @@ You
 </div>
 <div id="map">
 <div id="map_container">
-  <script type='text/javascript'>
-   google.load('visualization', '1', {'packages': ['geochart']});
-   google.setOnLoadCallback(drawMarkersMap);
 
-    function drawMarkersMap() {
-    var data = new google.visualization.DataTable();
-    data.addColumn('string', 'State');
-    data.addColumn('number', '24-1b Deaths from asthma ...');
-    data.addRows([ 
-		    {% for subfocus in subfocuses %}
-		    ['{{subfocus.0}}' , {{subfocus.1}}],
-		    {% endfor %}
-    		    ]);
-/*
-    data.addRows([
-['Alaska', 17.5],
-['Arizona', 2.6],
-['Arkansas', 3.9],
-['California', 0.033333333333333],
-['Colorado', 1.5333333333333],
-['Connecticut', 2.05],
-['Delaware', 18.3],
-['District of Columbia', 29],
-['Florida', 1],
-['Georgia', 0.1],
-['Illinois', 1.8666666666667],
-['Indiana', 1.7666666666667],
-['Iowa', 3.3333333333333],
-['Kansas', 3.95],
-['Kentucky', 2.8666666666667],
-['Louisiana', 1.1],
-['Maryland', 2.4],
-['Massachusetts', 0.1],
-['Michigan', 1.2666666666667],
-['Minnesota', 14.5],
-['Mississippi', 6.9666666666667],
-['Missouri', 4.1333333333333],
-['Montana', 4.8],
-['Nebraska', 0.85],
-['Nevada', 6],
-['New Hampshire', 11.1],
-['New Jersey', 0.96666666666667],
-['New Mexico', 0.63333333333333],
-['New York', 1.8],
-['North Carolina', 0.26666666666667],
-['Ohio', 4.6],
-['Oklahoma', 1.6],
-['Oregon', 1.4333333333333],
-['Pennsylvania', 5.45],
-['Rhode Island', 3.15],
-['South Carolina', 0.13333333333333],
-['Tennessee', 1.1666666666667],
-['Texas', 1.7666666666667],
-['Utah', 3.5333333333333],
-['Virginia', 3.5666666666667],
-['Washington', 3.9],
-['West Virginia', 6.1333333333333],
-['Wisconsin', 1.7]
-    ]);
-*/
-    var options = {
-      region: 'US',
-      resolution: 'provinces',
-      displayMode: 'regions',
-      colorAxis: {colors: ['yellow', 'red'],
-      width: 556,
-      height: 347}
-    };
-
-    var chart = new google.visualization.GeoChart(document.getElementById('map_div'));
-    chart.draw(data, options);
-  };
-  </script>
 <div id="map_div"></div>
 </div>
 </div>
