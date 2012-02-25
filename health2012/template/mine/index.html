@@ -38,6 +38,14 @@ $.ajaxSetup({
 $(document).ready(function(){
 (function($){
 	var hook = {
+		chart: new google.visualization.BarChart(document.getElementById('chart_div'));
+		chartData: new google.visualization.DataTable(); // Global: Use for updating chart
+		options: {
+			width: 400, height: 240,
+			title: 'Counting On US',
+			animation:{ duration: 1000, easing: 'out' },
+			vAxis: {title: 'Concern',  titleTextStyle: {color: 'red'}}
+		};
 		onDocumentReady: function(){
 			var self = hook;
 			$('select').each(function(index){
@@ -65,26 +73,21 @@ $(document).ready(function(){
 				console.log(rData);
 			});
 		}, // End of sendData
+		updateChart: function(){
+
+		}, // End of updateChart
 		drawChart: function(){
 			var self = hook;
 			console.log('drawChart');
-			var data = new google.visualization.DataTable();
-			data.addColumn('string', 'Concern');
-			data.addColumn('number', 'Me');
-			data.addColumn('number', 'You');
-			data.addRows([
+			chartData.addColumn('string', 'Concern');
+			chartData.addColumn('number', 'Me');
+			chartData.addColumn('number', 'You');
+			chartData.addRows([
 				{% for bar in bars%}
 				['{{bar.0}}', {{bar.1}},{{bar.2}}],
 				{% endfor  %}
 			]);
 
-			var options = {
-				width: 400, height: 240,
-				title: 'Counting On US',
-				animation:{ duration: 1000, easing: 'out' },
-				vAxis: {title: 'Concern',  titleTextStyle: {color: 'red'}}
-			};
-			var chart = new google.visualization.BarChart(document.getElementById('chart_div'));
 			chart.draw(data, options);
 		}, // End of drawChart
 	}; // End of hook
