@@ -38,14 +38,6 @@ $.ajaxSetup({
 $(document).ready(function(){
 (function($){
 	var hook = {
-		chart: new google.visualization.BarChart(document.getElementById('chart_div'));
-		chartData: new google.visualization.DataTable(); // Global: Use for updating chart
-		options: {
-			width: 400, height: 240,
-			title: 'Counting On US',
-			animation:{ duration: 1000, easing: 'out' },
-			vAxis: {title: 'Concern',  titleTextStyle: {color: 'red'}}
-		};
 		onDocumentReady: function(){
 			var self = hook;
 			$('select').each(function(index){
@@ -57,8 +49,18 @@ $(document).ready(function(){
 					self.sendChange(sChange);
 					self.sendData();
 				});
-			google.setOnLoadCallback(self.drawChart);
 			});
+
+			// Global variables
+			chart = new google.visualization.BarChart(document.getElementById('chart_div'));
+			chartData = new google.visualization.DataTable(); // Global: Use for updating chart
+			options = {
+				width: 400, height: 240,
+				title: 'Counting On US',
+				animation:{ duration: 500, easing: 'in' },
+				vAxis: {title: 'Concern',  titleTextStyle: {color: 'red'}}
+			};
+
 		}, // End of onDocumentReady
 		sendChange: function(sChange){
 			var self = hook;
@@ -73,12 +75,17 @@ $(document).ready(function(){
 				console.log(rData);
 			});
 		}, // End of sendData
-		updateChart: function(){
+		updateChart: function(data){
+			var self = hook;
+			chartData.removeRows(0, chartData.getNumberOfRows());
+			var testData = ['TEST', 1000, 2000];
+			chartData.addRows([testData]);
+			chart.draw(chartData, options);
 
 		}, // End of updateChart
-		drawChart: function(){
+		initChart: function(){
 			var self = hook;
-			console.log('drawChart');
+			console.log('initChart');
 			chartData.addColumn('string', 'Concern');
 			chartData.addColumn('number', 'Me');
 			chartData.addColumn('number', 'You');
@@ -88,15 +95,15 @@ $(document).ready(function(){
 				{% endfor  %}
 			]);
 
-			chart.draw(data, options);
-		}, // End of drawChart
+			chart.draw(chartData, options);
+		}, // End of initChart
 	}; // End of hook
 	Pane = {
 		hook: hook,
 		onDocumentReady: function(){
 			var self = Pane;
 			self.hook.onDocumentReady();
-			google.setOnLoadCallback(self.hook.drawChart);
+			google.setOnLoadCallback(self.hook.initChart);
 		},
 	}
 	Pane.onDocumentReady();
