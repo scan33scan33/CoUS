@@ -3,7 +3,8 @@
 <title>Counting on US</title>
 <script type='text/javascript' src='https://www.google.com/jsapi'></script>
 <script type='text/javascript' src='http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js'></script>
-<link href="http://www.aiksee.com/~minghen/style.css" rel="stylesheet" type="text/css" />
+<link href="/static/style.css" rel="stylesheet" type="text/css" />
+<link href="/static/navigation.css" rel="stylesheet" type="text/css" />
 <link href='http://fonts.googleapis.com/css?family=Fredericka+the+Great' rel='stylesheet' type='text/css'>
 
 <script type="text/javascript">
@@ -86,10 +87,13 @@ $(document).ready(function(){
 		updateChart: function(data){
 			var self = hook;
 			var options = {
-				width: 400, height: 240,
+				chartArea: { left: 250 },
+				legend: {position: 'top', },
+				width: 1000, height: 400,
 				title: 'Counting On US',
 				animation:{ duration: 800, easing: 'in' },
-				vAxis: {title: 'Concern',  titleTextStyle: {color: 'red'}}
+				vAxis: {title: 'Concern',  titleTextStyle: {color: 'red'}, 
+				}
 			};
 			chartData.removeRows(0, chartData.getNumberOfRows());
 			chartData.addRows(data);
@@ -122,11 +126,44 @@ $(document).ready(function(){
 			geoChart.draw(geochartData, options);
 		},
 	}; // End of hook
+	var nav = {
+		onDocumentReady: function(){
+			var self = nav;
+			var $el, leftPos, newWidth;
+			$("#nav-bar").append("<li id='magic-line'></li>");
+			    
+			var $magicLine = $("#magic-line");
+			    
+		    	$magicLine
+				.width($(".current_page_item").width())
+				.css("left", $(".current_page_item a").position().left)
+				.data("origLeft", $magicLine.position().left)
+				.data("origWidth", $magicLine.width());
+				
+			$("#nav-bar li").find("a").hover(function() {
+				$el = $(this);
+				leftPos = $el.position().left;
+				newWidth = $el.parent().width();
+				
+				$magicLine.stop().animate({
+				    left: leftPos,
+				    width: newWidth
+				});
+			}, function() {
+				$magicLine.stop().animate({
+					left: $magicLine.data("origLeft"),
+					width: $magicLine.data("origWidth")
+				});    
+			});
+		}, // End of onDocumentReady
+	};
 	Pane = {
 		hook: hook,
+		nav: nav,
 		onDocumentReady: function(){
 			var self = Pane;
 			self.hook.onDocumentReady();
+			self.nav.onDocumentReady();
 			google.setOnLoadCallback(self.hook.initChart);
 			google.setOnLoadCallback(self.hook.initGeochart);
 		},
@@ -146,100 +183,89 @@ $(document).ready(function(){
 		-->
 		<img alt="Counting on US" src="http://www.aiksee.com/~minghen/logo.png" height="100px"/>
 		Counting on US</div>
+
+	<div class="nav-wrap">
+
+		<ul class="group" id="nav-bar">
+            <li class="current_page_item">
+            	<a href="#">Home</a>
+            </li>
+            <li><a href="#">About</a></li>
+            <li><a href="#">Contact</a></li>
+        </ul>
+        
+    </div>
+
 <div id="individual">
-<div id="you">
-You
-<form id="you_form" action="index" method="post">
-	
-<select name="yourstate">
-{% for state in statelist %}
-{% if yourstate == state %}
-<option value="{{state}}" selected>{{state}}</option>
-{% else %}
-<option value="{{state}}" >{{state}}</option>
-{% endif %}
-{% endfor %}
-</select>
-<!--
-<select name="yourgender" onchange="submit();">
-{% for gender in genderlist %}
-{% if yourgender == gender %}
-<option value="{{gender}}" selected>{{gender}}</option>
-{% else %}
-<option value="{{gender}}" >{{gender}}</option>
-{% endif %}
-{% endfor %}
-</select>
--->
-<select name="yourrace">
-{% for race in racelist %}
-{% if yourrace == race %}
-<option value="{{race}}" selected>{{race}}</option>
-{% else %}
-<option value="{{race}}" >{{race}}</option>
-{% endif %}
-{% endfor %}
-</select>
+	<div id="you">
+	You
+		<form id="you_form" action="index" method="post">
+			
+		<select name="yourstate">
+		{% for state in statelist %}
+		{% if yourstate == state %}
+		<option value="{{state}}" selected>{{state}}</option>
+		{% else %}
+		<option value="{{state}}" >{{state}}</option>
+		{% endif %}
+		{% endfor %}
+		</select>
 
-<select name="yourfocus">
-{% for subfocus in subfocuslist %}
-{% if yourfocus == subfocus %}
-<option value="{{subfocus}}" selected>{{subfocus}}</option>
-{% else %}
-<option value="{{subfocus}}">{{subfocus}}</option>
-{% endif %}
-{% endfor %}
-</select>
+		<select name="yourrace">
+		{% for race in racelist %}
+		{% if yourrace == race %}
+		<option value="{{race}}" selected>{{race}}</option>
+		{% else %}
+		<option value="{{race}}" >{{race}}</option>
+		{% endif %}
+		{% endfor %}
+		</select>
 
+		<select name="yourfocus">
+		{% for subfocus in subfocuslist %}
+		{% if yourfocus == subfocus %}
+		<option value="{{subfocus}}" selected>{{subfocus}}</option>
+		{% else %}
+		<option value="{{subfocus}}">{{subfocus}}</option>
+		{% endif %}
+		{% endfor %}
+		</select>
+	</div>
 
+	<div id="scan_btn">
+	<a href="#" class="scan-button">Auto Scan Your Health</a>
+	</div>
 
-<!--
-</form>
--->
-</div>
-<div id="graphs">
-<div id="chart_div"></div>
-</div>
+	<div id="friend">Friend<br/>
+		<select name="itsstate" action="index">
+		{% for state in statelist %}
+		{% if itsstate == state %}
+		<option value="{{state}}" selected>{{state}}</option>
+		{% else %}
+		<option value="{{state}}" >{{state}}</option>
+		{% endif %}
+		{% endfor %}
+		</select>
 
+		<select name="itsrace">
+		{% for race in racelist %}
+		{% if itsrace == race %}
+		<option value="{{race}}" selected>{{race}}</option>
+		{% else %}
+		<option value="{{race}}" >{{race}}</option>
+		{% endif %}
+		{% endfor %}
+		</select>
+		</form>
+	</div>
 
-<div id="friend">Friend<br/>
-<!--	
-<form id="you_form">
-	-->	
-<select name="itsstate" action="index">
-{% for state in statelist %}
-{% if itsstate == state %}
-<option value="{{state}}" selected>{{state}}</option>
-{% else %}
-<option value="{{state}}" >{{state}}</option>
-{% endif %}
-{% endfor %}
-</select>
-<!--
-<select name="itsgender" onchange="submit();">
-{% for gender in genderlist %}
-{% if itsgender == gender %}
-<option value="{{gender}}" selected>{{gender}}</option>
-{% else %}
-<option value="{{gender}}" >{{gender}}</option>
-{% endif %}
-{% endfor %}
-</select>
--->
-<select name="itsrace">
-{% for race in racelist %}
-{% if itsrace == race %}
-<option value="{{race}}" selected>{{race}}</option>
-{% else %}
-<option value="{{race}}" >{{race}}</option>
-{% endif %}
-{% endfor %}
-</select>
-</form>
-</div>
+	<div id="sep"></div>
 
-<div id="sep"></div>
+	<div id="graphs">
+	<div id="chart_div"></div>
+	</div>
 
+	<div id="sep"></div>
 </div>
 
 

@@ -1,0 +1,155 @@
+#chart_div {
+	margin: auto;
+}
+
+.title {
+-moz-border-radius: 0.5em 0.5em 0em 0em;
+border-radius: 0.5em 0.5em 0em 0em;
+	text-align: center;
+	margin: auto;
+	padding: 30px;
+	background-color: yellow;
+	width: 500px;
+	font-family: 'Fredericka the Great', cursive;
+	font-size: 36px;
+}
+
+#title {
+    -moz-border-radius: 1em 1em 0em 0em;
+    border-radius: 1em 1em 0em 0em;
+	text-align: center;
+	margin: auto;
+	background-color: #a6b7c8;//yellow;
+	width: 1000px;
+	font-family: 'Fredericka the Great', cursive;
+	font-size: 36px;
+	vertical-align: middle;
+	color: white;
+}
+
+#mapcontainer {
+	width: 560px;
+	background-color: white;
+}
+
+#page {
+	-moz-border-radius: 15px;
+	border-radius: 15px;
+	background-color: red;
+	margin: auto;
+	width: 560px;
+	padding: 10px;
+		
+}
+
+body {
+	background: #a6b7c8;
+}
+
+
+#page_container {
+	width: 1000px;
+	margin: auto;
+	background-color: white;
+	padding: 5px;
+	background: #a6b7c8;
+}
+
+#individual {
+		-moz-border-radius: 0.5em 0.5em 0em 0em;
+	border-radius: 0.5em 0.5em 0em 0em;
+	background-color: white;
+	overflow:auto; 
+}
+
+#you {
+	background-color: white;
+	float: left;
+	width: 295px;
+	text-align: center;
+}
+
+#graphs {
+	background-color: white;
+	margin: 0 auto;
+	width: 100%;
+}
+
+#friend {
+	background-color: white	;
+	float: right;
+	width: 295px;
+	text-align: center;
+}
+
+#sep {
+	clear: both;
+}
+
+#us {
+	overflow:auto;
+}
+
+#category {
+		-moz-border-radius: 0.5em 0.5em 0em 0em;
+		border-radius: 0.5em 0.5em 0em 0em;
+		background-color: #a6b7c8;//yellow;
+		font-family: 'Fredericka the Great', cursive;
+		text-align: center;
+		padding-top: 5px;
+		padding-bottom: 5px;
+		color: white;
+}
+
+#map {
+	background-color: white;
+	margin: auto;
+}
+
+#map_container {
+		width: 756;
+		margin: auto;
+}
+
+#footer {
+	text-align: center;
+}
+
+select {
+	width: 280px;
+}
+
+.scan-button {
+	-moz-box-shadow:inset 0px 1px 2px 0px #fce2c1;
+	-webkit-box-shadow:inset 0px 1px 2px 0px #fce2c1;
+	box-shadow:inset 0px 1px 2px 0px #fce2c1;
+	background:-webkit-gradient( linear, left top, left bottom, color-stop(0.05, #ffc477), color-stop(1, #fb9e25) );
+	background:-moz-linear-gradient( center top, #ffc477 5%, #fb9e25 100% );
+	filter:progid:DXImageTransform.Microsoft.gradient(startColorstr='#ffc477', endColorstr='#fb9e25');
+	background-color:#ffc477;
+	-moz-border-radius:10px;
+	-webkit-border-radius:10px;
+	border-radius:10px;
+	border:2px solid #eeb44f;
+	display:inline-block;
+	color:#ffffff;
+	font-family:Trebuchet MS;
+	font-size:16px;
+	font-weight:bold;
+	padding:8px 32px;
+	text-decoration:none;
+	text-shadow:1px 1px 0px #cc9f52;
+}.scan-button:hover {
+	background:-webkit-gradient( linear, left top, left bottom, color-stop(0.05, #fb9e25), color-stop(1, #ffc477) );
+	background:-moz-linear-gradient( center top, #fb9e25 5%, #ffc477 100% );
+	filter:progid:DXImageTransform.Microsoft.gradient(startColorstr='#fb9e25', endColorstr='#ffc477');
+	background-color:#fb9e25;
+}.scan-button:active {
+	position:relative;
+	top:1px;
+}
+
+#scan_btn{
+	float:left;
+	margin: 1em 1em 0em 6em;
+}
