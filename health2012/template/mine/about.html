@@ -1,0 +1,87 @@
+<html>
+<head>
+<title>Counting on US</title>
+<script type='text/javascript' src='http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js'></script>
+<link href="/static/style.css" rel="stylesheet" type="text/css" />
+<link href="/static/navigation.css" rel="stylesheet" type="text/css" />
+
+<script type="text/javascript">
+$(document).ready(function(){
+(function($){
+	var nav = {
+		onDocumentReady: function(){
+			var self = nav;
+			var $el, leftPos, newWidth;
+			$("#nav-bar").append("<li id='magic-line'></li>");
+			    
+			var $magicLine = $("#magic-line");
+			    
+		    	$magicLine
+				.width($(".current_page_item").width())
+				.css("left", $(".current_page_item a").position().left)
+				.data("origLeft", $magicLine.position().left)
+				.data("origWidth", $magicLine.width());
+				
+			$("#nav-bar li").find("a").hover(function() {
+				$el = $(this);
+				leftPos = $el.position().left;
+				newWidth = $el.parent().width();
+				
+				$magicLine.stop().animate({
+				    left: leftPos,
+				    width: newWidth
+				});
+			}, function() {
+				$magicLine.stop().animate({
+					left: $magicLine.data("origLeft"),
+					width: $magicLine.data("origWidth")
+				});    
+			});
+		}, // End of onDocumentReady
+	};
+	Pane = {
+		nav: nav,
+		onDocumentReady: function(){
+			var self = Pane;
+			self.nav.onDocumentReady();
+		},
+	}
+	Pane.onDocumentReady();
+})(jQuery);
+});
+</script>
+
+</head>
+<body>
+
+<div id="page_container">
+	<div id="title">
+		<!--
+		<img alt="Counting on US" src="images/logo.png" height="100px"/>
+		-->
+		<img alt="Counting on US" src="http://www.aiksee.com/~minghen/logo.png" height="100px"/>
+		Counting on US</div>
+
+	<div class="nav-wrap">
+
+	<ul class="group" id="nav-bar">
+	    <li><a href="index">Home</a></li>
+            <li class="current_page_item">
+            <a href="about">About</a>
+            </li>
+            <li><a href="contact">Contact</a></li>
+        </ul>
+        
+    </div>
+
+<div id="individual">
+	Here are our story.
+</div>
+<div id="footer">
+Counting on US - Making public health data personal - health2dev challenge - 2012
+</div>
+
+</div>
+
+</body>
+</html>

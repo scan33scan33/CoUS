@@ -212,3 +212,9 @@ def display(request):
     
     c = Context({"relnames":relnames , "names" : names,"genders" : genders, "edus" : edus, "races" : races, "alldatat" : alldatat, "counter" : counter})
     return HttpResponse(t.render(c))
+
+def about(request):
+    return render_to_response('mine/about.html')
+
+def contact(request):
+    return render_to_response('mine/contact.html')
