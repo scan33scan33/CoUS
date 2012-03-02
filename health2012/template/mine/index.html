@@ -184,6 +184,7 @@ $(document).ready(function(){
 				value: 0,
 				complete: function(event, ui){
 					$('#dialog_process').html('Done.');
+					Pane.hook.updateChart([['WIN', 100, 430]]);
 				},
 			});
 		},
