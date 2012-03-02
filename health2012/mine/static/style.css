@@ -15,8 +15,8 @@ border-radius: 0.5em 0.5em 0em 0em;
 }
 
 #title {
-    -moz-border-radius: 1em 1em 0em 0em;
-    border-radius: 1em 1em 0em 0em;
+        -moz-border-radius: 1em 1em 0em 0em;
+        border-radius: 1em 1em 0em 0em;
 	text-align: center;
 	margin: auto;
 	background-color: #a6b7c8;//yellow;
@@ -91,14 +91,14 @@ body {
 }
 
 #category {
-		-moz-border-radius: 0.5em 0.5em 0em 0em;
-		border-radius: 0.5em 0.5em 0em 0em;
-		background-color: #a6b7c8;//yellow;
-		font-family: 'Fredericka the Great', cursive;
-		text-align: center;
-		padding-top: 5px;
-		padding-bottom: 5px;
-		color: white;
+	-moz-border-radius: 0.5em 0.5em 0em 0em;
+	border-radius: 0.5em 0.5em 0em 0em;
+	background-color: #a6b7c8;//yellow;
+	font-family: 'Fredericka the Great', cursive;
+	text-align: center;
+	padding-top: 5px;
+	padding-bottom: 5px;
+	color: white;
 }
 
 #map {
@@ -107,8 +107,8 @@ body {
 }
 
 #map_container {
-		width: 756;
-		margin: auto;
+	width: 756;
+	margin: auto;
 }
 
 #footer {
@@ -150,8 +150,7 @@ select {
 }
 
 #scan_btn{
-	float:left;
-	margin: 1em 1em 0em 6em;
+	margin: 0em 0em 0em 3em;
 }
 
 .ui-progressbar-value{ 

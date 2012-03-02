@@ -129,9 +129,11 @@ $(document).ready(function(){
 			geoChart.draw(geochartData, options);
 		},
 	}; // End of hook
-	var nav = {
+	var effect = {
 		onDocumentReady: function(){
-			var self = nav;
+			var self = effect;
+
+			// Navigating Bar 
 			var $el, leftPos, newWidth;
 			$("#nav-bar").append("<li id='magic-line'></li>");
 			    
@@ -159,32 +161,46 @@ $(document).ready(function(){
 					width: $magicLine.data("origWidth")
 				});    
 			});
+
+			// Accordion
+			$('#accordion').accordion({
+				autoHeight: false,
+				navigation: true,
+				collapsible: true,
+			});
 		}, // End of onDocumentReady
-	};
+	}; // End of effect
 	var scan = {
 		maxPercent: 100,
+		elapsedTime: 0,
+		elapsedTimeID: 0,
 		onDocumentReady: function(){
 			var self = scan;
+			$('#dialog_process').dialog({
+				modal: true,
+				width: 500,
+				resizable: false,
+				draggable: false,
+				show: "drop",
+				buttons: {
+					Cancel: function(){
+						$( this ).dialog( "close" );
+					}
+				},
+			});
+			$('#dialog_process').dialog('close');
 			$('.scan-button').click(function(){
 				$("#dialog:ui-dialog" ).dialog( "destroy" );
-				$('#dialog_process').dialog({
-					modal: true,
-					resizable: false,
-					draggable: false,
-					show: "drop",
-					buttons: {
-						Cancel: function(){
-							$( this ).dialog( "close" );
-						}
-					},
-				});
+				$('#dialog_process').dialog('open');
+				self.updateBar();
 			});
 
 			$('#process_bar').progressbar({
 				value: 0,
 				complete: function(event, ui){
-					$('#dialog_process').html('Done.');
-					Pane.hook.updateChart([['WIN', 100, 430]]);
+					$('#dialog_process').dialog('option', 'buttons', 
+						{'OK': function(){$(this).dialog('close');}}
+					);
 				},
 			});
 		},
@@ -192,26 +208,36 @@ $(document).ready(function(){
 			var self = scan;
 			self.maxPercent = percent;
 		},
-		barUpdate: function(){
+		updateBar: function(){
 			var self = scan;
+			clearTimeout(self.elapsedTimeID);
 			var bar = $('#process_bar');
 			var val = bar.progressbar('option', 'value');
+			$('#dialog_text').html(val+"%");
 			if(val < self.maxPercent){
 				bar.progressbar('option', 'value', val + 1);
-				setTimeout(self.barUpdate, 100);
+				setTimeout(self.updateBar, ((10000 - self.elapsedTime) / 100) );
+			}
+		},
+		tick: function(){
+			var self = scan;
+			// in ms
+			if(self.elapsedTime < 10000){
+				self.elapsedTime += 1000;
+				self.elapsedTimeID = setTimeout(self.tick, 1000);
 			}
 		},
 	};
 	Pane = {
 		hook: hook,
-		nav: nav,
+		effect: effect,
 		scan: scan,
 		onDocumentReady: function(){
 			var self = Pane;
 			self.hook.onDocumentReady();
-			self.nav.onDocumentReady();
+			self.effect.onDocumentReady();
 			self.scan.onDocumentReady();
-			self.scan.barUpdate();
+			self.scan.tick();
 			google.setOnLoadCallback(self.hook.initChart);
 			google.setOnLoadCallback(self.hook.initGeochart);
 		},
@@ -224,9 +250,9 @@ $(document).ready(function(){
 </head>
 <body>
 
-<div id="dialog_process" title="Scaning" style="display: none;">
-	<div id="process_bar"></div>
-	Please wait few seconds.
+<div id="dialog_process" title="Guessing your health profile..." style="display: none;">
+	<div id="process_bar"></div><br />
+	<div id="dialog_text">Please wait few seconds.</div>
 </div>
 
 <div id="page_container">
@@ -285,9 +311,6 @@ $(document).ready(function(){
 		</select>
 	</div>
 
-	<div id="scan_btn">
-	<a href="#" class="scan-button">Auto Scan Your Health</a>
-	</div>
 
 	<div id="friend">Friend<br/>
 		<select name="itsstate" action="index">
@@ -313,6 +336,9 @@ $(document).ready(function(){
 	</div>
 
 	<div id="sep"></div>
+	<div id="scan_btn">
+	<a href="#" class="scan-button">Counting on US</a>
+	</div>
 
 	<div id="graphs">
 	<div id="chart_div"></div>
@@ -321,18 +347,19 @@ $(document).ready(function(){
 	<div id="sep"></div>
 </div>
 
-
-
-<div id="us">
-<div id="category">
-	Category - {{yourfocus}}
-</div>
-<div id="map">
-<div id="map_container">
-
-<div id="map_div"></div>
-</div>
-</div>
+<div id="accordion">
+	<h3><a href="#">Learn More</a></h3>
+	<div id="learn_more">
+		MORE INFO!
+	</div>
+	<h3><a href="#">Compare with U.S.</a></h3>
+	<div id="us">
+		<div id="map">
+			<div id="map_container">
+				<div id="map_div"></div>
+			</div>
+		</div>
+	</div>
 </div>
 <div id="footer">
 Counting on US - Making public health data personal - health2dev challenge - 2012
