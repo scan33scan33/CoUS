@@ -2,9 +2,11 @@
 <head>
 <title>Counting on US</title>
 <script type='text/javascript' src='https://www.google.com/jsapi'></script>
-<script type='text/javascript' src='http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js'></script>
+<script type='text/javascript' src='/static/jquery-1.7.1.min.js'></script>
+<script type='text/javascript' src='/static/jquery-ui-1.8.18.custom.min.js'></script>
 <link href="/static/style.css" rel="stylesheet" type="text/css" />
 <link href="/static/navigation.css" rel="stylesheet" type="text/css" />
+<link href="/static/jquery-ui-1.8.18.custom.css" rel="stylesheet" type="text/css" />
 <link href='http://fonts.googleapis.com/css?family=Fredericka+the+Great' rel='stylesheet' type='text/css'>
 
 <script type="text/javascript">
@@ -72,6 +74,7 @@ $(document).ready(function(){
 				console.log(rData);
 			});
 		}, // End of sendData
+			
 		initChart: function(){
 			var self = hook;
 			chartData.addColumn('string', 'Concern');
@@ -138,6 +141,7 @@ $(document).ready(function(){
 				.width($(".current_page_item").width())
 				.css("left", $(".current_page_item a").position().left)
 				.data("origLeft", $magicLine.position().left)
+			
 				.data("origWidth", $magicLine.width());
 				
 			$("#nav-bar li").find("a").hover(function() {
@@ -157,13 +161,56 @@ $(document).ready(function(){
 			});
 		}, // End of onDocumentReady
 	};
+	var scan = {
+		maxPercent: 100,
+		onDocumentReady: function(){
+			var self = scan;
+			$('.scan-button').click(function(){
+				$("#dialog:ui-dialog" ).dialog( "destroy" );
+				$('#dialog_process').dialog({
+					modal: true,
+					resizable: false,
+					draggable: false,
+					show: "drop",
+					buttons: {
+						Cancel: function(){
+							$( this ).dialog( "close" );
+						}
+					},
+				});
+			});
+
+			$('#process_bar').progressbar({
+				value: 0,
+				complete: function(event, ui){
+					$('#dialog_process').html('Done.');
+				},
+			});
+		},
+		setPercent: function(percent){
+			var self = scan;
+			self.maxPercent = percent;
+		},
+		barUpdate: function(){
+			var self = scan;
+			var bar = $('#process_bar');
+			var val = bar.progressbar('option', 'value');
+			if(val < self.maxPercent){
+				bar.progressbar('option', 'value', val + 1);
+				setTimeout(self.barUpdate, 100);
+			}
+		},
+	};
 	Pane = {
 		hook: hook,
 		nav: nav,
+		scan: scan,
 		onDocumentReady: function(){
 			var self = Pane;
 			self.hook.onDocumentReady();
 			self.nav.onDocumentReady();
+			self.scan.onDocumentReady();
+			self.scan.barUpdate();
 			google.setOnLoadCallback(self.hook.initChart);
 			google.setOnLoadCallback(self.hook.initGeochart);
 		},
@@ -175,6 +222,11 @@ $(document).ready(function(){
 
 </head>
 <body>
+
+<div id="dialog_process" title="Scaning" style="display: none;">
+	<div id="process_bar"></div>
+	Please wait few seconds.
+</div>
 
 <div id="page_container">
 	<div id="title">

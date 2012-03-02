@@ -153,3 +153,8 @@ select {
 	float:left;
 	margin: 1em 1em 0em 6em;
 }
+
+.ui-progressbar-value{ 
+	background-image: url(/static/images/pbar-ani.gif); 
+	height: 100px;
+}
