@@ -128,6 +128,22 @@ $(document).ready(function(){
 			geochartData.addRows(data);
 			geoChart.draw(geochartData, options);
 		},
+		updateList: function(data){ // data should be a 2D array.[[value, ], ]
+			var self = hook;
+			var lists = $('select');
+			lists.html('');
+			lists.each(function(index, element){
+				for(var i = 0; i < data[index].length; i++){
+					$(element).append('<option value="'
+						+ data[index][i]
+						+ '">'
+						+ data[index][i]
+						+ '</option>'
+					);
+				}
+			});
+
+		}, // End of updateList
 	}; // End of hook
 	var effect = {
 		onDocumentReady: function(){
