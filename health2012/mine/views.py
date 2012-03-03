@@ -324,6 +324,9 @@ def about(request):
 def contact(request):
     return render_to_response('mine/contact.html')
 
+def collaborators(request):
+    return render_to_response('mine/collaborators.html')
+
 def pre_populate(request):
     if request.method == 'POST':
         IP_ADDR = request.META['REMOTE_ADDR']

@@ -47,12 +47,10 @@ $(document).ready(function(){
 		onDocumentReady: function(){
 			var self = Pane;
 			self.nav.onDocumentReady();
-
 			// Accordion effect
 			$('#accordion').accordion({
 				autoHeight: false,
 				navigation: true,
-				collapsible: true,
 			});
 		},
 	}
@@ -76,40 +74,19 @@ $(document).ready(function(){
 
 	<ul class="group" id="nav-bar">
 	    <li><a href="index">Home</a></li>
-            <li class="current_page_item">
-            <a href="about">About</a>
-            </li>
+            <li><a href="about">About</a></li>
             <li><a href="collaborators">Collaborators</a></li>
-            <li><a href="contact">Contact</a></li>
+            <li class="current_page_item">
+		    <a href="contact">Contact</a>
+            </li>
         </ul>
         
     </div>
 
 	<div id="accordion">
-		<h3><a href="#">About</a></h3>
-		<div id="about_text">
-CountingOnUS is an open source social media engagement platform built of the principle that big health data is not just be made accessible and easy to understand, but also personal. By providing simple, straightforward comparisons of the disparities in demographic profiles between two individuals, CountingOnUS aims to highlight the differences that might impact you. Does a difference of ethnicity greatly change the possibility of two similar individuals contracting cancer? Is your father more likely to be affected by environmental pollutants, or are you? What sorts of potential health issues are you likely to face, in the place you live in? Find out.
-<br />
-<br />
-Using data sets provided by the CDC, CountingOnUS seeks to illuminate these questions by doing away with the typically impersonal nature of health statistics and data providing intimate person-to-person demographic comparisons. Compare your own demographic health profile to friends and family and not only discover some shocking differences that might affect you later in life, but also click on the links provided by collaborating public health organizations to learn what you can do about those disparities.
-<br />
-<br />
-With CountingOnUS big health data--and the disparities it can reveal--gets personal.
-		</div>
-		<h3><a href="#">Recognition</a></h3>
-		<div>
-CountingOnUS was conceived and developed over a 36 hour period as a part of the Health 2.0 Columbia University Code-a-Thon, in January 2012. The platform won second place in the Code-a-Thon, and is now a contestant for the Healthy People 2020 Leading Health Indicators App Challenge, also hosted by Health 2.0
-
-		</div>
-		<h3><a href="#">Team</a></h3>
-		<div>
-CountingOnUS is the health data love child of Michael Carroll, David Huang, Bastien Rance, Ming-Hen Tsai, and Ivy Wu.
-
-		</div>
-		<h3><a href="#">Source</a></h3>
-		<div>
-Find the code for CountingOnUS and repurpose it or contribute your own improvements at https://github.com/crimsonbamboo/CountingOnUS
-
+		<h3><a href="#">Collaborators</a></h3>
+		<div id="contact_text">
+			List of our collaborators.
 		</div>
 	</div>
 <div id="footer">

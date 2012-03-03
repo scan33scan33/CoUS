@@ -83,8 +83,8 @@ $(document).ready(function(){
 		initChart: function(){
 			var self = hook;
 			chartData.addColumn('string', 'Concern');
-			chartData.addColumn('number', 'Me');
 			chartData.addColumn('number', 'You');
+			chartData.addColumn('number', 'Friend');
 			var initData = [
 					{% for bar in bars%}
 					['{{bar.0}}', {{bar.1}},{{bar.2}}],
@@ -100,8 +100,8 @@ $(document).ready(function(){
 				width: 1000, height: 400,
 				title: 'Counting On US',
 				animation:{ duration: 800, easing: 'in' },
-				vAxis: {title: 'Concern',  titleTextStyle: {color: 'red'}, 
-				}
+				vAxis: {titleTextStyle: {color: 'red'}},
+				hAxis: {title: 'Dangerous Score', titleTextStyle: {color: 'red'}}
 			};
 			chartData.removeRows(0, chartData.getNumberOfRows());
 			chartData.addRows(data);
@@ -316,6 +316,7 @@ $(document).ready(function(){
             	<a href="index">Home</a>
             </li>
             <li><a href="about">About</a></li>
+            <li><a href="collaborators">Collaborators</a></li>
             <li><a href="contact">Contact</a></li>
     	</div>
 
