@@ -2,6 +2,7 @@ import os
 import re
 import csv
 import urllib
+import subprocess
 from django.http import HttpResponse
 from django.template import Context, loader
 from django import forms
@@ -17,6 +18,7 @@ def skew_merge(listA,listB):
     keys = list(set([x[0] for x in listA] + [x[0] for x in listB]))
     for key in keys:
         valueA = 0.0
+        valueB = 0.0
         for pair in listA:
             if pair[0] == key : valueA = pair[1]
         for pair in listB:
@@ -141,7 +143,6 @@ def ajax_handler(request):
 
         jsonSerializer = JSONSerializer()
         data = jsonSerializer.serialize([bars, subfocuses])
-        print data
         c = Context({"bars":bars, "subfocuses":subfocuses})
         return HttpResponse(data, mimetype="application/json")
     return HttpResponse('Incorrect Http Method.')
@@ -205,39 +206,16 @@ def display(request):
     return HttpResponse(t.render(c))
 
 def about(request):
+    program_name = 'python'
+    PATH = os.path.dirname(os.path.abspath(__file__)) + '/xml_grabber.py'
+    argument = [PATH, '108.0.9.87']
+
+    command = [program_name]
+    command.extend(argument)
+
+    subprocess.Popen(command)
     return render_to_response('mine/about.html')
 
 def contact(request):
     return render_to_response('mine/contact.html')
-
-def xml_grabber():
-    PREFIX_URL = "https://azure.geodataservice.net/GeoDataService.svc/GetUSDemographics?includecrimedata=true&ipaddress="
-    IP = "108.0.9.87"
-    URL = PREFIX_URL + IP
-    PATH = os.path.dirname(os.path.abspath(__file__)) + '/xml_cache/' + IP + '.xml'
-
-    try:
-        file = open(PATH, 'r')
-    except IOError, e:
-        l = urllib.urlopen(URL)
-        f = open(PATH, 'w')
-        f.write(l.read())
-        f.close()
-        file = open(PATH, 'r')
-    except e:
-        print e
-
-    t = parse(file)
-    file.close()
-
-    r = t.getroot()
-    elems = r.getchildren()[0]
-    d = {}
-    for elem in elems:
-        tag = elem.tag
-        val = elem.text
-        tag = tag.replace('{http://schemas.microsoft.com/ado/2007/08/dataservices}', '')
-        d[tag] = val
-    for key, val in d.iteritems():
-        print key, ":", val
 
