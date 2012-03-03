@@ -18,15 +18,14 @@ def main():
     try:
         file = open(PATH, 'r')
         file.close()
-        sys.exit()
+        return 
     except IOError, e:
         l = urllib.urlopen(URL)
         f = open(PATH, 'w')
         f.write(l.read())
         f.close()
-        file = open(PATH, 'r')
-    except e:
-        print e
+    except:
+        print "Unexcepted Error: ", sys.exc_info()[0]
 
 if __name__ == "__main__":
     main()

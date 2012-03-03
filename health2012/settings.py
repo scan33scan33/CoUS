@@ -1,3 +1,5 @@
+import os
+WORKING_PATH = os.path.dirname(os.path.abspath(__file__))
 # Django settings for health2012 project.
 
 DEBUG = True
@@ -45,7 +47,7 @@ USE_L10N = True
 
 # Absolute filesystem path to the directory that will hold user-uploaded files.
 # Example: "/home/media/media.lawrence.com/media/"
-MEDIA_ROOT = '/Users/ymcagodme/Django-project/CoUS/health2012/media'
+MEDIA_ROOT = WORKING_PATH + '/media'
 
 # URL that handles the media served from MEDIA_ROOT. Make sure to use a
 # trailing slash.
@@ -56,7 +58,7 @@ MEDIA_URL = ''
 # Don't put anything in this directory yourself; store your static files
 # in apps' "static/" subdirectories and in STATICFILES_DIRS.
 # Example: "/home/media/media.lawrence.com/static/"
-STATIC_ROOT = '/Users/ymcagodme/Django-project/CoUS/health2012/static/'
+STATIC_ROOT = WORKING_PATH + '/static/'
 
 # URL prefix for static files.
 # Example: "http://media.lawrence.com/static/"
@@ -103,7 +105,7 @@ MIDDLEWARE_CLASSES = (
 ROOT_URLCONF = 'health2012.urls'
 
 TEMPLATE_DIRS = (
-    '/home/minghen/CoUS/health2012/template'
+    WORKING_PATH + '/template'
     # Put strings here, like "/home/html/django_templates" or "C:/www/django/templates".
     # Always use forward slashes, even on Windows.
     # Don't forget to use absolute paths, not relative paths.
