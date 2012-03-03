@@ -16,7 +16,7 @@ from xml.etree.ElementTree import parse
 # Compute correlation
 def pearson(x, y):
     # Assume len(x) == len(y)
-    if len(x) <= 10 or len(y) <= 10: return 0
+    if len(x) <= 20 or len(y) <= 20: return 0
     # Normalize
     sumarrA = sum(map(lambda z: abs(z), (x)))   
     sumarrB = sum(map(lambda z: abs(z), (y)))   
@@ -143,19 +143,11 @@ def retrieve_corrtable(yourtopic,yourattr):
 #                row.append(0)
 #        corrtable.append(row)
 
-<<<<<<< HEAD
     return attrs,topics,corrtable
-=======
 #    print corrtable 
-
->>>>>>> ee8d8ad59db3663961b46b191ca801f4206bcc5c
 
 
 def index(request):
-    postopics,negtopics = retrieve_corrtable('HIV','White')
-    print '\n'.join(postopics)
-    print '\n'.join(negtopics)
-    
     IP_ADDR = request.META['REMOTE_ADDR']
     xml_grabber(IP_ADDR)
 #    latest_poll_list = Poll.objects.all().order_by('-pub_date')[:5]
@@ -166,9 +158,11 @@ def index(request):
     edulist = ['-----','A','B','C']
     
     
+    topiclist = Item.objects.values('topic').distinct() 
     subfocuslist = Item.objects.values('subtopic').distinct() 
     statelist = Item.objects.values('state').distinct() 
     racelist = Item.objects.values('attr').distinct()
+    topiclist = sorted([x[0] for x in  subfocuslist.values_list('topic')[1:]])
     subfocuslist = sorted([x[0] for x in  subfocuslist.values_list('subtopic')[1:]])
     statelist = sorted([x[0] for x in statelist.values_list('state')[1:]])
     racelist = sorted([x[0] for x in racelist.values_list('attr')[1:]])
@@ -185,6 +179,7 @@ def index(request):
     yourstate = "Connecticut"
     itsstate = "Louisiana"
     yourfocus = "1-1 Persons with health insurance (aged under 65 years)"
+    yourtopic = "Diabetes"
 
     #Check if it is just change #TODO
     try:
@@ -230,8 +225,9 @@ def index(request):
 
     bars = retrieve_bars(yourstate,yourrace,itsstate,itsrace)
     subfocuses = retrieve_subfocuses(yourrace,yourfocus)
+    postopics,negtopics = retrieve_corrtable(yourtopic,'')
 
-    c = Context({"yourstate":yourstate, "itsstate" : itsstate, "yourgender" : yourgender, "itsgender" : itsgender, "youredu" : youredu, "itsedu":itsedu, "yourrace": yourrace, "itsrace" : itsrace,'statelist' : statelist, 'racelist' : racelist, 'genderlist' : genderlist, 'edulist':edulist, "bars" : bars, "subfocuslist" : subfocuslist, "subfocuses" : subfocuses, "yourfocus" : yourfocus, "postopics" : postopics, "negtopics" : negtopics})
+    c = Context({"yourstate":yourstate, "itsstate" : itsstate, "yourgender" : yourgender, "itsgender" : itsgender, "youredu" : youredu, "itsedu":itsedu, "yourrace": yourrace, "itsrace" : itsrace,'statelist' : statelist, 'racelist' : racelist, 'genderlist' : genderlist, 'edulist':edulist, "bars" : bars, "subfocuslist" : subfocuslist, "subfocuses" : subfocuses, "yourfocus" : yourfocus, "postopics" : postopics, "negtopics" : negtopics, "yourtopic" : yourtopic, "topiclist" : topiclist})
     return HttpResponse(t.render(c))
 
 def field_filter(request):
@@ -246,7 +242,9 @@ def ajax_handler(request):
         subfocuslist = Item.objects.values('subtopic').distinct() 
         statelist = Item.objects.values('state').distinct() 
         racelist = Item.objects.values('attr').distinct()
- 
+
+        print request.POST
+
         yourstate = request.POST['yourstate']
         yourrace = request.POST['yourrace']
         itsstate = request.POST['itsstate']
@@ -256,10 +254,10 @@ def ajax_handler(request):
 
         bars = retrieve_bars(yourstate,yourrace,itsstate,itsrace)
         subfocuses = retrieve_subfocuses(yourrace,yourfocus)
+        postopics,negtopics = retrieve_corrtable(yourtopic,'')
 
         jsonSerializer = JSONSerializer()
-        data = jsonSerializer.serialize([bars, subfocuses])
-        c = Context({"bars":bars, "subfocuses":subfocuses})
+        data = jsonSerializer.serialize([bars, subfocuses, postopics, negtopics])
         return HttpResponse(data, mimetype="application/json")
     return HttpResponse('Incorrect Http Method.')
 

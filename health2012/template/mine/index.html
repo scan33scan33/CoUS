@@ -76,6 +76,7 @@ $(document).ready(function(){
 				var geochartData = rData[1];
 				self.updateChart(chartData);
 				self.updateGeochart(geochartData);
+				self.updateRelated(rData[2],rData[3]);
 			});
 		}, // End of sendData
 			
@@ -150,6 +151,10 @@ $(document).ready(function(){
 			});
 
 		}, // End of updateList
+		updateRelated: function(dataPos,dataNeg){
+			var self = hook;
+			//console.log('updateChart is called');
+		}, 
 	}; // End of hook
 	var effect = {
 		onDocumentReady: function(){
@@ -312,14 +317,13 @@ $(document).ready(function(){
             </li>
             <li><a href="about">About</a></li>
             <li><a href="contact">Contact</a></li>
-        </ul>
-        
-    </div>
+    	</div>
 
+	
+<form id="you_form" action="index" method="post">
 <div id="individual">
 	<div id="you">
 	You
-		<form id="you_form" action="index" method="post">
 			
 		<select name="yourstate">
 		{% for state in statelist %}
@@ -373,7 +377,6 @@ $(document).ready(function(){
 		{% endif %}
 		{% endfor %}
 		</select>
-		</form>
 	</div>
 
 	<div id="sep"></div>
@@ -395,11 +398,23 @@ $(document).ready(function(){
 	</div>
 	<h3><a href="#">Related Topics</a></h3>
 	<div id="related">
-		Selected Topic: Diabetes  <br/>
+		Selected Topic: 
+		<select name="yourtopic">
+		{% for topic in topiclist %}
+		{% if yourtopic == topic %}
+		<option value="{{topic}}" selected>{{topic}}</option>
+		{% else %}
+		<option value="{{topic}}" >{{topic}}</option>
+		{% endif %}
+		{% endfor %}
+		</select>
+	</form>
+		<br/>
 		Postive Related: <br/>
 		{% for topic in postopics %}
 		{{topic}}<br/>
 		{% endfor %}
+		<br/>
 		Negative Related: <br/>
 		{% for topic in negtopics %}
 		{{topic}}<br/>
