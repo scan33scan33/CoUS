@@ -16,7 +16,7 @@ from xml.etree.ElementTree import parse
 # Compute correlation
 def pearson(x, y):
     # Assume len(x) == len(y)
-    if len(x) <= 1 or len(y) <= 1: return 0
+    if len(x) <= 10 or len(y) <= 10: return 0
     # Normalize
     sumarrA = sum(map(lambda z: abs(z), (x)))   
     sumarrB = sum(map(lambda z: abs(z), (y)))   
@@ -66,10 +66,11 @@ def retrieve_subfocuses(yourrace,yourfocus):
     return subfocuses
 
 def retrieve_corrtable(yourtopic,yourattr):
-    width = 8
-    height = 3
+    width = 5
+#    height = 1
 
     arrs = Item.objects.filter(topic = yourtopic).values_list('attr','value')
+    print arrs
     attr2value = {}
     for i in range(len(arrs)) :
         attr2value[arrs[i][0]] = arrs[i][1]
@@ -91,12 +92,16 @@ def retrieve_corrtable(yourtopic,yourattr):
             if attr2value.has_key(arr[0]):
                 arrA.append(arr[1])    
                 arrB.append(attr2value[arr[0]])
+   #     print arrA,arrB
         topics_score.append([topic_,pearson(arrA,arrB)])
     topics_score = sorted(topics_score,cmp_by_last)
-    topics = []
-    for i in range(width): topics.append(topics_score[i][0])
-    for i in range(width): topics.append(topics_score[-i][0])
+    print topics_score[0:5]
+    postopics = []
+    negtopics = []
+    for i in range(width): postopics.append(topics_score[i][0])
+    for i in range(width): negtopics.append(topics_score[-i][0])
 
+    return postopics, negtopics
 
 
     arrs = Item.objects.filter(attr = yourattr).values_list('topic','value')
@@ -130,23 +135,25 @@ def retrieve_corrtable(yourtopic,yourattr):
     print attrs
 
     corrtable = []
-    for attr in attrs:
-        row = []
-        for topic in topics:
-            value = Item.objects.filter(attr = attr,topic = topic).values_list('value')
-            if len(value) > 0:
-                row.append(value[0][0])
-            else :
-                row.append(0)
-        corrtable.append(row)
+#    for attr in attrs:
+#        row = []
+#        for topic in topics:
+#            value = Item.objects.filter(attr = attr,topic = topic).values_list('value')
+#            if len(value) > 0:
+#                row.append(value[0][0])
+#            else :
+#                row.append(0)
+#        corrtable.append(row)
 
-    print corrtable 
+#    print corrtable 
 
-    return attrs,topics,corrtable
 
 
 def index(request):
-    attrs,topics,corrtable = retrieve_corrtable('Diabetes','White')
+    postopics,negtopics = retrieve_corrtable('HIV','White')
+    print '\n'.join(postopics)
+    print '\n'.join(negtopics)
+    
     IP_ADDR = request.META['REMOTE_ADDR']
 #    latest_poll_list = Poll.objects.all().order_by('-pub_date')[:5]
     t = loader.get_template('mine/index.html')
@@ -222,7 +229,7 @@ def index(request):
     subfocuses = retrieve_subfocuses(yourrace,yourfocus)
     print subfocuses
 
-    c = Context({"yourstate":yourstate, "itsstate" : itsstate, "yourgender" : yourgender, "itsgender" : itsgender, "youredu" : youredu, "itsedu":itsedu, "yourrace": yourrace, "itsrace" : itsrace,'statelist' : statelist, 'racelist' : racelist, 'genderlist' : genderlist, 'edulist':edulist, "bars" : bars, "subfocuslist" : subfocuslist, "subfocuses" : subfocuses, "yourfocus" : yourfocus, "attrs" : attrs, "topics" : topics, "corrtable" : corrtable})
+    c = Context({"yourstate":yourstate, "itsstate" : itsstate, "yourgender" : yourgender, "itsgender" : itsgender, "youredu" : youredu, "itsedu":itsedu, "yourrace": yourrace, "itsrace" : itsrace,'statelist' : statelist, 'racelist' : racelist, 'genderlist' : genderlist, 'edulist':edulist, "bars" : bars, "subfocuslist" : subfocuslist, "subfocuses" : subfocuses, "yourfocus" : yourfocus, "postopics" : postopics, "negtopics" : negtopics})
     return HttpResponse(t.render(c))
 
 def field_filter(request):
