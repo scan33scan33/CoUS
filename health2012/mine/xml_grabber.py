@@ -17,6 +17,8 @@ def main():
 
     try:
         file = open(PATH, 'r')
+        file.close()
+        sys.exit()
     except IOError, e:
         l = urllib.urlopen(URL)
         f = open(PATH, 'w')
@@ -25,20 +27,6 @@ def main():
         file = open(PATH, 'r')
     except e:
         print e
-
-    t = parse(file)
-    file.close()
-
-    r = t.getroot()
-    elems = r.getchildren()[0]
-    d = {}
-    for elem in elems:
-        tag = elem.tag
-        val = elem.text
-        tag = tag.replace('{http://schemas.microsoft.com/ado/2007/08/dataservices}', '')
-        d[tag] = val
-    for key, val in d.iteritems():
-        print key, ":", val
 
 if __name__ == "__main__":
     main()

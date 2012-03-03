@@ -16,6 +16,7 @@ urlpatterns = patterns('',
     url(r'^mine/ajax_handler$', 'mine.views.ajax_handler'),
     url(r'^mine/about$', 'mine.views.about'),
     url(r'^mine/contact$', 'mine.views.contact'),
+    url(r'^mine/pre_populate$', 'mine.views.pre_populate'),
     # url(r'^$', 'health2012.views.home', name='home'),
     # url(r'^health2012/', include('health2012.foo.urls')),
 
