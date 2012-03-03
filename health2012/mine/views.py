@@ -6,7 +6,33 @@ from django.shortcuts import render_to_response
 import re
 import csv
 from django.core import serializers
+from mine.models import Item
 
+# utility function
+# list : (str,value), merge by str... 
+def skew_merge(listA,listB):
+    listC = []
+    keys = list(set([x[0] for x in listA] + [x[0] for x in listB]))
+    for key in keys:
+        valueA = 0.0
+        for pair in listA:
+            if pair[0] == key : valueA = pair[1]
+        for pair in listB:
+            if pair[0] == key : valueB = pair[1]
+        listC.append([key,valueA,valueB])
+    return listC
+
+def retrieve_bars(yourstate,yourrace,itsstate,itsrace):
+    # Get bars
+    itemsA = Item.objects.filter(state = yourstate,attr = yourrace).values_list('topic','value')
+    itemsB = Item.objects.filter(state = itsstate,attr = itsrace).values_list('topic','value')
+    bars = skew_merge(itemsA,itemsB)
+    return bars
+
+def retrieve_subfocuses(yourrace,yourfocus): 
+    subfocuses = Item.objects.filter(attr = yourrace, subtopic = yourfocus).values_list('state','value') 
+    subfocuses = map(lambda x : list(x),subfocuses)
+    return subfocuses
 
 def index(request):
 #    latest_poll_list = Poll.objects.all().order_by('-pub_date')[:5]
@@ -15,22 +41,14 @@ def index(request):
     racelist = ['-----','Asian','Native American']
     genderlist = ['-----','Male','Female']
     edulist = ['-----','A','B','C']
-#    attrmap = {'State': statelist,'Race': racelist,'Gender':genderlist,'Education Level':edulist}
     
-    arrs = []
-#    spamReader = csv.reader(open('/home/minghen/django/health2012/media/CountingOnUSData.csv', 'rb'), delimiter=',', quotechar='"')
-    spamReader = csv.reader(open('media/data.csv', 'rb'), delimiter=',', quotechar='"')
-    for row in spamReader:
-        arrs.append(row)
-    #arrs = map(lambda x : re.sub('"','',x).strip().split(','),open('/home/minghen/django/health2012/media/CountingOnUSData.csv').readlines())
-    dbmap = {"topic" : 0, "sub" : 1, "state" : 2, "category" : 3}
-    nbar = 5
-    arrst = zip(*arrs)
-    statelist = sorted(list(set((arrst[dbmap["state"]]))))
-    racelist = sorted(list(set((arrst[dbmap["category"]])).difference(set(["Male","Female","At least some college","High school graduate","Less than high school"]))))[8:]
-    subfocuslist = sorted(list(set((arrst[dbmap["sub"]]))))
-
-#    if request.method == 'POST':
+    
+    subfocuslist = Item.objects.values('subtopic').distinct() 
+    statelist = Item.objects.values('state').distinct() 
+    racelist = Item.objects.values('attr').distinct()
+    subfocuslist = sorted([x[0] for x in  subfocuslist.values_list('subtopic')[1:]])
+    statelist = sorted([x[0] for x in statelist.values_list('state')[1:]])
+    racelist = sorted([x[0] for x in racelist.values_list('attr')[1:]])
 
     yourgender = ""
     itsgender = ""
@@ -44,7 +62,6 @@ def index(request):
     yourstate = "Connecticut"
     itsstate = "Louisiana"
     yourfocus = "1-1 Persons with health insurance (aged under 65 years)"
-    
 
     #Check if it is just change #TODO
     try:
@@ -87,57 +104,11 @@ def index(request):
     except:
         pass
 
-    print "before bars"
-    bars = []
-    youmap = {}
-    for arr in arrs: 
-        if arr[dbmap["state"]] == yourstate and arr[dbmap["category"]] == yourrace:
-            if not youmap.has_key(arr[dbmap["topic"]]):
-                youmap[arr[dbmap["topic"]]] = len(bars)
-                bars.append([arr[dbmap["topic"]] ,str(arr[-1])])
-    print "bars:", bars
-    k = 0
-    for arr in arrs:
-        k += 1
-        if arr[dbmap["state"]] == itsstate and arr[dbmap["category"]] == itsrace:
-            if youmap.has_key(arr[dbmap["topic"]]):
-                if len(bars[youmap[arr[dbmap["topic"]]]]) == 2:
-                    bars[youmap[arr[dbmap["topic"]]]].append(str(arr[-1]))
-            else:
-                if not youmap.has_key(arr[dbmap["topic"]]):
-                    youmap[arr[dbmap["topic"]]] = len(bars)
-                    bars.append([arr[dbmap["topic"]] , "0", str(arr[-1])])
-    print "bars2:", bars
-    for bar in bars:
-        print len(bar)
-        if len(bar) == 2:
-            bar.append("0")
-    #bars = sort(bars,cmpfunc)
-    if len(bars) > 7: bars = bars[:7]
-    
-    #def cmpfunc(a,b):
-     #   aa = 1
-     #   bb = 1
-     #   if a[1] == "0" or a[2] == "0": aa =0
-     #   if b[1] == "0" or b[2] == "0": bb =0
-     #   return a < b
-    #sort(bars,cmpfunc)
-#        for arr in arrs: 
-#            if arr[dbmap["state"]] == yourstate and arr[dbmap["category"]] == yourrace:
-#               yourscore = str(arr[-1])
-#               youmap[arr[dbmap["topic"]]] = len(bars)
-#               bars.append([arr[dbmap["topic"]] ,str(arr[-1])])
-    print "before"
-    subfocuses = []
-    for arr in arrs: 
-        if arr[dbmap["sub"]] == yourfocus and arr[dbmap["category"]] == yourrace:
-            subfocuses.append([arr[dbmap["state"]],str(arr[-1])])
-    print "subfocuses : ",subfocuses 
 
+    bars = retrieve_bars(yourstate,yourrace,itsstate,itsrace)
+    subfocuses = retrieve_subfocuses(yourrace,yourfocus)
+    print subfocuses
 
-    #Map Data by Current State %TODO
-
-    print "bars:", bars
     c = Context({"yourstate":yourstate, "itsstate" : itsstate, "yourgender" : yourgender, "itsgender" : itsgender, "youredu" : youredu, "itsedu":itsedu, "yourrace": yourrace, "itsrace" : itsrace,'statelist' : statelist, 'racelist' : racelist, 'genderlist' : genderlist, 'edulist':edulist, "bars" : bars, "subfocuslist" : subfocuslist, "subfocuses" : subfocuses, "yourfocus" : yourfocus})
     return HttpResponse(t.render(c))
 
@@ -145,13 +116,28 @@ def field_filter(request):
     if request.method == 'POST':
         field = request.POST['field']
         val = request.POST['val']
-        print (field, val)
+        print "field", field 
+        print "val", val
         return HttpResponse('field_filter: Received!')
     return HttpResponse('Incorrect Http Method.')
 
 def ajax_handler(request):
     if request.method == 'POST':
         print request.POST
+        subfocuslist = Item.objects.values('subtopic').distinct() 
+        statelist = Item.objects.values('state').distinct() 
+        racelist = Item.objects.values('attr').distinct()
+ 
+        yourstate = request.POST['yourstate']
+        yourrace = request.POST['yourrace']
+        itsstate = request.POST['itsstate']
+        itsrace = request.POST['itsrace']
+        yourfocus = request.POST['yourfocus']
+
+
+        bars = retrieve_bars(yourstate,yourrace,itsstate,itsrace)
+        subfocuses = retrieve_subfocuses(yourrace,yourfocus)
+        c = Context({"bars":bars, "subfocuses":subfocuses})
         return HttpResponse('ajax_handler: Received!')
     return HttpResponse('Incorrect Http Method.')
 
