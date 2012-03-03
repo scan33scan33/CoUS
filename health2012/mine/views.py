@@ -1,13 +1,16 @@
-# Create your views here.
+import os
+import re
+import csv
+import urllib
+import subprocess
 from django.http import HttpResponse
 from django.template import Context, loader
 from django import forms
 from django.shortcuts import render_to_response
-import re
-import csv
-from django.core import serializers
+from json_utils import JSONSerializer
 from mine.models import Item
 from itertools import imap
+from xml.etree.ElementTree import parse
 
 # utility functions
 # Compute correlation
@@ -31,6 +34,7 @@ def pearson(x, y):
     den = pow(max((sum_x_sq - pow(sum_x, 2) / n) * (sum_y_sq - pow(sum_y, 2) / n),1e-9), 0.5)
     if den == 0: return 0
     return num / den
+
 
 # list : (str,value), merge by str... 
 def skew_merge(listA,listB):
@@ -143,6 +147,7 @@ def retrieve_corrtable(yourtopic,yourattr):
 
 def index(request):
     attrs,topics,corrtable = retrieve_corrtable('Diabetes','White')
+    IP_ADDR = request.META['REMOTE_ADDR']
 #    latest_poll_list = Poll.objects.all().order_by('-pub_date')[:5]
     t = loader.get_template('mine/index.html')
     statelist = ['-----','NY','NJ']
@@ -224,14 +229,11 @@ def field_filter(request):
     if request.method == 'POST':
         field = request.POST['field']
         val = request.POST['val']
-        print "field", field 
-        print "val", val
         return HttpResponse('field_filter: Received!')
     return HttpResponse('Incorrect Http Method.')
 
 def ajax_handler(request):
     if request.method == 'POST':
-        print request.POST
         subfocuslist = Item.objects.values('subtopic').distinct() 
         statelist = Item.objects.values('state').distinct() 
         racelist = Item.objects.values('attr').distinct()
@@ -246,8 +248,11 @@ def ajax_handler(request):
         bars = retrieve_bars(yourstate,yourrace,itsstate,itsrace)
         print bars
         subfocuses = retrieve_subfocuses(yourrace,yourfocus)
+
+        jsonSerializer = JSONSerializer()
+        data = jsonSerializer.serialize([bars, subfocuses])
         c = Context({"bars":bars, "subfocuses":subfocuses})
-        return HttpResponse('ajax_handler: Received!')
+        return HttpResponse(data, mimetype="application/json")
     return HttpResponse('Incorrect Http Method.')
 
 #The function is useless
@@ -309,7 +314,16 @@ def display(request):
     return HttpResponse(t.render(c))
 
 def about(request):
+    program_name = 'python'
+    PATH = os.path.dirname(os.path.abspath(__file__)) + '/xml_grabber.py'
+    argument = [PATH, '108.0.9.87']
+
+    command = [program_name]
+    command.extend(argument)
+
+    subprocess.Popen(command)
     return render_to_response('mine/about.html')
 
 def contact(request):
     return render_to_response('mine/contact.html')
+

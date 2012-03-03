@@ -72,6 +72,10 @@ $(document).ready(function(){
 			sData = $('#you_form').serialize();
 			$.post('ajax_handler', sData, function(rData){
 				console.log(rData);
+				var chartData = rData[0];
+				var geochartData = rData[1];
+				self.updateChart(chartData);
+				self.updateGeochart(geochartData);
 			});
 		}, // End of sendData
 			
@@ -101,6 +105,7 @@ $(document).ready(function(){
 			chartData.removeRows(0, chartData.getNumberOfRows());
 			chartData.addRows(data);
 			chart.draw(chartData, options);
+			console.log('updateChart is called');
 
 		}, // End of updateChart
 		initGeochart: function(){
@@ -127,6 +132,7 @@ $(document).ready(function(){
 			geochartData.removeRows(0, geochartData.getNumberOfRows());
 			geochartData.addRows(data);
 			geoChart.draw(geochartData, options);
+			console.log('updateGeochart is called');
 		},
 		updateList: function(data){ // data should be a 2D array.[[value, ], ]
 			var self = hook;
@@ -381,6 +387,9 @@ $(document).ready(function(){
 Counting on US - Making public health data personal - health2dev challenge - 2012
 </div>
 
+</div>
+
+<div id="debug">
 </div>
 
 </body>
