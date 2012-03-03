@@ -221,8 +221,27 @@ $(document).ready(function(){
 				value: 0,
 				complete: function(event, ui){
 					$('#dialog_process').dialog('option', 'buttons', 
-						{'OK': function(){$(this).dialog('close');}}
-					);
+						{'OK': function(){
+							$(this).dialog('close');
+					}});
+					self.getData();
+				},
+			});
+		},
+		getData: function(){
+			var self = scan;
+			$.ajax({
+				url: 'pre_populate',
+				type: 'POST',
+				success: function(rData){
+					console.log(rData);
+					$('#dialog_process').dialog('close');
+				},
+				statusCode:{
+					404: function(){
+						$('#dialog_process').attr('style', 'color:red;')
+						.html('<br/>Sorry, we can not detect your profile.');
+					},
 				},
 			});
 		},

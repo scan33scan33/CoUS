@@ -3,7 +3,7 @@ import re
 import csv
 import urllib
 import subprocess
-from django.http import HttpResponse
+from django.http import HttpResponse, HttpResponseNotFound
 from django.template import Context, loader
 from django import forms
 from django.shortcuts import render_to_response
@@ -155,6 +155,7 @@ def index(request):
     print '\n'.join(negtopics)
     
     IP_ADDR = request.META['REMOTE_ADDR']
+    xml_grabber(IP_ADDR)
 #    latest_poll_list = Poll.objects.all().order_by('-pub_date')[:5]
     t = loader.get_template('mine/index.html')
     statelist = ['-----','NY','NJ']
@@ -321,16 +322,60 @@ def display(request):
     return HttpResponse(t.render(c))
 
 def about(request):
-    program_name = 'python'
-    PATH = os.path.dirname(os.path.abspath(__file__)) + '/xml_grabber.py'
-    argument = [PATH, '108.0.9.87']
-
-    command = [program_name]
-    command.extend(argument)
-
-    subprocess.Popen(command)
     return render_to_response('mine/about.html')
 
 def contact(request):
     return render_to_response('mine/contact.html')
 
+def pre_populate(request):
+    if request.method == 'POST':
+        IP_ADDR = request.META['REMOTE_ADDR']
+        d = xml_parser(IP_ADDR)
+        if d is None:
+            return HttpResponseNotFound()
+        for key, val in d.iteritems():
+            print key, " : ", val
+        #jsonSerializer = JSONSerializer()
+        #data = jsonSerializer.serialize([bars, subfocuses])
+        return HttpResponse('T')
+    return HttpResponse('Incorrect Http Method.')
+
+def xml_grabber(IP_ADDR):
+    program_name = 'python'
+    PATH = os.path.dirname(os.path.abspath(__file__)) + '/xml_grabber.py'
+    argument = [PATH, IP_ADDR]
+    command = [program_name]
+    command.extend(argument)
+    subprocess.Popen(command)
+
+def xml_parser(IP_ADDR):
+    PATH = os.path.dirname(os.path.abspath(__file__)) + '/xml_cache/' + IP_ADDR + '.xml'
+
+    try:
+        file = open(PATH, 'r')
+    except IOError, e:
+        print e
+        l = urllib.urlopen(URL)
+        f = open(PATH, 'w')
+        f.write(l.read())
+        f.close()
+        file = open(PATH, 'r')
+    except e:
+        print e
+
+    t = parse(file)
+    file.close()
+
+    try:
+        r = t.getroot()
+        elems = r.getchildren()[0]
+        d = {}
+        for elem in elems:
+            tag = elem.tag
+            val = elem.text
+            tag = tag.replace('{http://schemas.microsoft.com/ado/2007/08/dataservices}', '')
+            d[tag] = val
+        return d
+    except IndexError, e:
+        print e
+        return None
