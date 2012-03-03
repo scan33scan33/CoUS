@@ -143,12 +143,9 @@ def retrieve_corrtable(yourtopic,yourattr):
 #                row.append(0)
 #        corrtable.append(row)
 
-<<<<<<< HEAD
     return attrs,topics,corrtable
-=======
 #    print corrtable 
 
->>>>>>> ee8d8ad59db3663961b46b191ca801f4206bcc5c
 
 
 def index(request):
@@ -325,6 +322,9 @@ def about(request):
 
 def contact(request):
     return render_to_response('mine/contact.html')
+
+def collaborators(request):
+    return render_to_response('mine/collaborators.html')
 
 def pre_populate(request):
     if request.method == 'POST':

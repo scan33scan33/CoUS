@@ -1,9 +1,12 @@
 <html>
 <head>
 <title>Counting on US</title>
-<script type='text/javascript' src='http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js'></script>
+<script type='text/javascript' src='/static/jquery-1.7.1.min.js'></script>
+<script type='text/javascript' src='/static/jquery-ui-1.8.18.custom.min.js'></script>
 <link href="/static/style.css" rel="stylesheet" type="text/css" />
 <link href="/static/navigation.css" rel="stylesheet" type="text/css" />
+<link href="/static/jquery-ui-1.8.18.custom.css" rel="stylesheet" type="text/css" />
+<link href='http://fonts.googleapis.com/css?family=Fredericka+the+Great' rel='stylesheet' type='text/css'>
 
 <script type="text/javascript">
 $(document).ready(function(){
@@ -44,6 +47,11 @@ $(document).ready(function(){
 		onDocumentReady: function(){
 			var self = Pane;
 			self.nav.onDocumentReady();
+			// Accordion effect
+			$('#accordion').accordion({
+				autoHeight: false,
+				navigation: true,
+			});
 		},
 	}
 	Pane.onDocumentReady();
@@ -67,6 +75,7 @@ $(document).ready(function(){
 	<ul class="group" id="nav-bar">
 	    <li><a href="index">Home</a></li>
             <li><a href="about">About</a></li>
+            <li><a href="collaborators">Collaborators</a></li>
             <li class="current_page_item">
 		    <a href="contact">Contact</a>
             </li>
@@ -74,10 +83,18 @@ $(document).ready(function(){
         
     </div>
 
-<div id="individual">
-	Contact INFO:
-	EMAIL@EMAIL.com
-</div>
+	<div id="accordion">
+		<h3><a href="#">Contact</a></h3>
+		<div id="contact_text">
+Have a questions about how CountingOnUS works? Want to contribute to our code or datasets? Does your organization think it could benefit and meaningfully contribute by partnering with CountingOnUS?
+<br />
+<br />
+If the answer is 'yes' to any of those questions, or even if it's 'no', drop us a line! We'd love to hear from you.
+<br />
+<br />
+Email: <a href="mailto:info@countingon.us ">info@countingon.us</a>
+		</div>
+	</div>
 <div id="footer">
 Counting on US - Making public health data personal - health2dev challenge - 2012
 </div>
