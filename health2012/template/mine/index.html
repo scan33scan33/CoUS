@@ -393,6 +393,19 @@ $(document).ready(function(){
 	<div id="learn_more">
 		MORE INFO!
 	</div>
+	<h3><a href="#">Related Topics</a></h3>
+	<div id="related">
+		Selected Topic: Diabetes  <br/>
+		Postive Related: <br/>
+		{% for topic in postopics %}
+		{{topic}}<br/>
+		{% endfor %}
+		Negative Related: <br/>
+		{% for topic in negtopics %}
+		{{topic}}<br/>
+		{% endfor %}
+	</div>
+
 	<h3><a href="#">Compare with U.S.</a></h3>
 	<div id="us">
 		<div id="map">
