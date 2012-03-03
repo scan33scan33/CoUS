@@ -126,8 +126,6 @@ def retrieve_corrtable(yourtopic,yourattr):
     attrs = []
     for i in range(height): attrs.append(attrs_score[i][0])
     for i in range(height): attrs.append(attrs_score[-i][0])
-    print topics
-    print attrs
 
     corrtable = []
     for attr in attrs:
@@ -139,8 +137,6 @@ def retrieve_corrtable(yourtopic,yourattr):
             else :
                 row.append(0)
         corrtable.append(row)
-
-    print corrtable 
 
     return attrs,topics,corrtable
 
@@ -221,7 +217,6 @@ def index(request):
 
     bars = retrieve_bars(yourstate,yourrace,itsstate,itsrace)
     subfocuses = retrieve_subfocuses(yourrace,yourfocus)
-    print subfocuses
 
     c = Context({"yourstate":yourstate, "itsstate" : itsstate, "yourgender" : yourgender, "itsgender" : itsgender, "youredu" : youredu, "itsedu":itsedu, "yourrace": yourrace, "itsrace" : itsrace,'statelist' : statelist, 'racelist' : racelist, 'genderlist' : genderlist, 'edulist':edulist, "bars" : bars, "subfocuslist" : subfocuslist, "subfocuses" : subfocuses, "yourfocus" : yourfocus, "attrs" : attrs, "topics" : topics, "corrtable" : corrtable})
     return HttpResponse(t.render(c))
@@ -247,7 +242,6 @@ def ajax_handler(request):
 
 
         bars = retrieve_bars(yourstate,yourrace,itsstate,itsrace)
-        print bars
         subfocuses = retrieve_subfocuses(yourrace,yourfocus)
 
         jsonSerializer = JSONSerializer()
@@ -309,7 +303,6 @@ def display(request):
  
     alldata = [relnames,names,states,races,genders,edus] 
     alldatat = map(lambda x: list(x),zip(*alldata))
-    print alldata
     
     c = Context({"relnames":relnames , "names" : names,"genders" : genders, "edus" : edus, "races" : races, "alldatat" : alldatat, "counter" : counter})
     return HttpResponse(t.render(c))
@@ -353,8 +346,8 @@ def xml_parser(IP_ADDR):
         f.write(l.read())
         f.close()
         file = open(PATH, 'r')
-    except e:
-        print e
+    except:
+        print "In View.xml_parser: unexcepted error"
 
     t = parse(file)
     file.close()
