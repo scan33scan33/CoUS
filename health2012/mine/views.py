@@ -9,9 +9,33 @@ from django import forms
 from django.shortcuts import render_to_response
 from json_utils import JSONSerializer
 from mine.models import Item
+from itertools import imap
 from xml.etree.ElementTree import parse
 
-# utility function
+# utility functions
+# Compute correlation
+def pearson(x, y):
+    # Assume len(x) == len(y)
+    if len(x) <= 1 or len(y) <= 1: return 0
+    # Normalize
+    sumarrA = sum(map(lambda z: abs(z), (x)))   
+    sumarrB = sum(map(lambda z: abs(z), (y)))   
+    if sumarrA == 0 or sumarrB == 0: return 0
+    x = map(lambda z: z / sumarrA, x)
+    y = map(lambda z: z / sumarrB, y)
+    
+    n = len(x)
+    sum_x = float(sum(x))
+    sum_y = float(sum(y))
+    sum_x_sq = sum(map(lambda x: pow(x, 2), x))
+    sum_y_sq = sum(map(lambda x: pow(x, 2), y))
+    psum = sum(imap(lambda x, y: x * y, x, y))
+    num = psum - (sum_x * sum_y/n)
+    den = pow(max((sum_x_sq - pow(sum_x, 2) / n) * (sum_y_sq - pow(sum_y, 2) / n),1e-9), 0.5)
+    if den == 0: return 0
+    return num / den
+
+
 # list : (str,value), merge by str... 
 def skew_merge(listA,listB):
     listC = []
@@ -26,6 +50,9 @@ def skew_merge(listA,listB):
         listC.append([key,valueA,valueB])
     return listC
 
+def cmp_by_last(a,b):
+    return a[-1] > b[-1] and -1 or 1 
+
 def retrieve_bars(yourstate,yourrace,itsstate,itsrace):
     # Get bars
     itemsA = Item.objects.filter(state = yourstate,attr = yourrace).values_list('topic','value')
@@ -38,7 +65,88 @@ def retrieve_subfocuses(yourrace,yourfocus):
     subfocuses = map(lambda x : list(x),subfocuses)
     return subfocuses
 
+def retrieve_corrtable(yourtopic,yourattr):
+    width = 8
+    height = 3
+
+    arrs = Item.objects.filter(topic = yourtopic).values_list('attr','value')
+    attr2value = {}
+    for i in range(len(arrs)) :
+        attr2value[arrs[i][0]] = arrs[i][1]
+ 
+    alls = Item.objects.all().values_list('topic','attr','value')
+    topic_arrs_map = {} # used later
+    for arr in alls:
+        if not topic_arrs_map.has_key(arr[0]) :
+            topic_arrs_map[arr[0]] = [[arr[1],arr[2]]]
+        else :
+            topic_arrs_map[arr[0]].append([arr[1],arr[2]])
+
+    topics_score = []
+    for topic_ in topic_arrs_map.keys() :
+        arrs = topic_arrs_map[topic_] 
+        arrA = []
+        arrB = []
+        for arr in arrs:
+            if attr2value.has_key(arr[0]):
+                arrA.append(arr[1])    
+                arrB.append(attr2value[arr[0]])
+        topics_score.append([topic_,pearson(arrA,arrB)])
+    topics_score = sorted(topics_score,cmp_by_last)
+    topics = []
+    for i in range(width): topics.append(topics_score[i][0])
+    for i in range(width): topics.append(topics_score[-i][0])
+
+
+
+    arrs = Item.objects.filter(attr = yourattr).values_list('topic','value')
+    topic2value = {}
+    for i in range(len(arrs)) :
+        topic2value[arrs[i][0]] = arrs[i][1]
+ 
+    alls = Item.objects.all().values_list('attr','topic','value')
+    attr_arrs_map = {} # used later
+    for arr in alls:
+        if not attr_arrs_map.has_key(arr[0]) :
+            attr_arrs_map[arr[0]] = [[arr[1],arr[2]]]
+        else :
+            attr_arrs_map[arr[0]].append([arr[1],arr[2]])
+
+    attrs_score = []
+    for attr_ in attr_arrs_map.keys() :
+        arrs = attr_arrs_map[attr_] 
+        arrA = []
+        arrB = []
+        for arr in arrs:
+            if topic2value.has_key(arr[0]):
+                arrA.append(arr[1])    
+                arrB.append(topic2value[arr[0]])
+        attrs_score.append([attr_,pearson(arrA,arrB)])
+    attrs_score = sorted(attrs_score,cmp_by_last)
+    attrs = []
+    for i in range(height): attrs.append(attrs_score[i][0])
+    for i in range(height): attrs.append(attrs_score[-i][0])
+    print topics
+    print attrs
+
+    corrtable = []
+    for attr in attrs:
+        row = []
+        for topic in topics:
+            value = Item.objects.filter(attr = attr,topic = topic).values_list('value')
+            if len(value) > 0:
+                row.append(value[0][0])
+            else :
+                row.append(0)
+        corrtable.append(row)
+
+    print corrtable 
+
+    return attrs,topics,corrtable
+
+
 def index(request):
+    attrs,topics,corrtable = retrieve_corrtable('Diabetes','White')
     IP_ADDR = request.META['REMOTE_ADDR']
     xml_grabber(IP_ADDR)
 #    latest_poll_list = Poll.objects.all().order_by('-pub_date')[:5]
@@ -115,8 +223,7 @@ def index(request):
     subfocuses = retrieve_subfocuses(yourrace,yourfocus)
     print subfocuses
 
-    print subfocuses
-    c = Context({"yourstate":yourstate, "itsstate" : itsstate, "yourgender" : yourgender, "itsgender" : itsgender, "youredu" : youredu, "itsedu":itsedu, "yourrace": yourrace, "itsrace" : itsrace,'statelist' : statelist, 'racelist' : racelist, 'genderlist' : genderlist, 'edulist':edulist, "bars" : bars, "subfocuslist" : subfocuslist, "subfocuses" : subfocuses, "yourfocus" : yourfocus})
+    c = Context({"yourstate":yourstate, "itsstate" : itsstate, "yourgender" : yourgender, "itsgender" : itsgender, "youredu" : youredu, "itsedu":itsedu, "yourrace": yourrace, "itsrace" : itsrace,'statelist' : statelist, 'racelist' : racelist, 'genderlist' : genderlist, 'edulist':edulist, "bars" : bars, "subfocuslist" : subfocuslist, "subfocuses" : subfocuses, "yourfocus" : yourfocus, "attrs" : attrs, "topics" : topics, "corrtable" : corrtable})
     return HttpResponse(t.render(c))
 
 def field_filter(request):
@@ -140,6 +247,7 @@ def ajax_handler(request):
 
 
         bars = retrieve_bars(yourstate,yourrace,itsstate,itsrace)
+        print bars
         subfocuses = retrieve_subfocuses(yourrace,yourfocus)
 
         jsonSerializer = JSONSerializer()
