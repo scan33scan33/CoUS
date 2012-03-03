@@ -1,12 +1,14 @@
-# Create your views here.
+import os
+import re
+import csv
+import urllib
 from django.http import HttpResponse
 from django.template import Context, loader
 from django import forms
 from django.shortcuts import render_to_response
-import re
-import csv
-from django.core import serializers
+from json_utils import JSONSerializer
 from mine.models import Item
+from xml.etree.ElementTree import parse
 
 # utility function
 # list : (str,value), merge by str... 
@@ -35,6 +37,7 @@ def retrieve_subfocuses(yourrace,yourfocus):
     return subfocuses
 
 def index(request):
+    IP_ADDR = request.META['REMOTE_ADDR']
 #    latest_poll_list = Poll.objects.all().order_by('-pub_date')[:5]
     t = loader.get_template('mine/index.html')
     statelist = ['-----','NY','NJ']
@@ -109,6 +112,7 @@ def index(request):
     subfocuses = retrieve_subfocuses(yourrace,yourfocus)
     print subfocuses
 
+    print subfocuses
     c = Context({"yourstate":yourstate, "itsstate" : itsstate, "yourgender" : yourgender, "itsgender" : itsgender, "youredu" : youredu, "itsedu":itsedu, "yourrace": yourrace, "itsrace" : itsrace,'statelist' : statelist, 'racelist' : racelist, 'genderlist' : genderlist, 'edulist':edulist, "bars" : bars, "subfocuslist" : subfocuslist, "subfocuses" : subfocuses, "yourfocus" : yourfocus})
     return HttpResponse(t.render(c))
 
@@ -116,14 +120,11 @@ def field_filter(request):
     if request.method == 'POST':
         field = request.POST['field']
         val = request.POST['val']
-        print "field", field 
-        print "val", val
         return HttpResponse('field_filter: Received!')
     return HttpResponse('Incorrect Http Method.')
 
 def ajax_handler(request):
     if request.method == 'POST':
-        print request.POST
         subfocuslist = Item.objects.values('subtopic').distinct() 
         statelist = Item.objects.values('state').distinct() 
         racelist = Item.objects.values('attr').distinct()
@@ -137,8 +138,12 @@ def ajax_handler(request):
 
         bars = retrieve_bars(yourstate,yourrace,itsstate,itsrace)
         subfocuses = retrieve_subfocuses(yourrace,yourfocus)
+
+        jsonSerializer = JSONSerializer()
+        data = jsonSerializer.serialize([bars, subfocuses])
+        print data
         c = Context({"bars":bars, "subfocuses":subfocuses})
-        return HttpResponse('ajax_handler: Received!')
+        return HttpResponse(data, mimetype="application/json")
     return HttpResponse('Incorrect Http Method.')
 
 #The function is useless
@@ -204,3 +209,35 @@ def about(request):
 
 def contact(request):
     return render_to_response('mine/contact.html')
+
+def xml_grabber():
+    PREFIX_URL = "https://azure.geodataservice.net/GeoDataService.svc/GetUSDemographics?includecrimedata=true&ipaddress="
+    IP = "108.0.9.87"
+    URL = PREFIX_URL + IP
+    PATH = os.path.dirname(os.path.abspath(__file__)) + '/xml_cache/' + IP + '.xml'
+
+    try:
+        file = open(PATH, 'r')
+    except IOError, e:
+        l = urllib.urlopen(URL)
+        f = open(PATH, 'w')
+        f.write(l.read())
+        f.close()
+        file = open(PATH, 'r')
+    except e:
+        print e
+
+    t = parse(file)
+    file.close()
+
+    r = t.getroot()
+    elems = r.getchildren()[0]
+    d = {}
+    for elem in elems:
+        tag = elem.tag
+        val = elem.text
+        tag = tag.replace('{http://schemas.microsoft.com/ado/2007/08/dataservices}', '')
+        d[tag] = val
+    for key, val in d.iteritems():
+        print key, ":", val
+

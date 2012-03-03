@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<GetUSDemographics xmlns="http://schemas.microsoft.com/ado/2007/08/dataservices">
+  <element p2:type="GeoData.CensusData" xmlns:p2="http://schemas.microsoft.com/ado/2007/08/dataservices/metadata">
+    <ZipCode p2:type="Edm.Int32">90703</ZipCode>
+    <Longitude p2:type="Edm.Double">-118.048458</Longitude>
+    <Latitude p2:type="Edm.Double">33.866635</Latitude>
+    <ElevationAverageFeet p2:type="Edm.Int32">267</ElevationAverageFeet>
+    <NearSaltWater p2:type="Edm.Boolean">false</NearSaltWater>
+    <NearLake p2:type="Edm.Boolean">false</NearLake>
+    <NearRiver p2:type="Edm.Boolean">false</NearRiver>
+    <Population p2:type="Edm.Int32">51542</Population>
+    <WhitePopulation p2:type="Edm.Int32">13852</WhitePopulation>
+    <BlackPopulation p2:type="Edm.Int32">3427</BlackPopulation>
+    <HispanicPopulation p2:type="Edm.Int32">5502</HispanicPopulation>
+    <AsianPopulation p2:type="Edm.Int32">30044</AsianPopulation>
+    <HawaiianPopulation p2:type="Edm.Int32">96</HawaiianPopulation>
+    <IndianPopulation p2:type="Edm.Int32">143</IndianPopulation>
+    <OtherPopulation p2:type="Edm.Int32">2025</OtherPopulation>
+    <MalePopulation p2:type="Edm.Int32">25075</MalePopulation>
+    <FemalePopulation p2:type="Edm.Int32">26467</FemalePopulation>
+    <MedianAge p2:type="Edm.Decimal">39.3</MedianAge>
+    <MedianAgeMale p2:type="Edm.Decimal">37.9</MedianAgeMale>
+    <MedianAgeFemale p2:type="Edm.Decimal">40.4</MedianAgeFemale>
+    <HouseholdsPerZipCode p2:type="Edm.Decimal">15604.0</HouseholdsPerZipCode>
+    <PersonsPerHousehold p2:type="Edm.Decimal">3.3</PersonsPerHousehold>
+    <AverageHouseValue p2:type="Edm.Decimal">280500.0</AverageHouseValue>
+    <IncomePerHousehold p2:type="Edm.Decimal">72906.0</IncomePerHousehold>
+    <IncomeBelowPoverty p2:type="Edm.Decimal">0.15400</IncomeBelowPoverty>
+    <IncomeLessThan25 p2:type="Edm.Decimal">0</IncomeLessThan25>
+    <IncomeBetween25to50 p2:type="Edm.Decimal">0.23200</IncomeBetween25to50>
+    <IncomeBetween50to100 p2:type="Edm.Decimal">0.29710</IncomeBetween50to100>
+    <IncomeBetween100to200 p2:type="Edm.Decimal">0.18440</IncomeBetween100to200>
+    <IncomeGreater200 p2:type="Edm.Decimal">0.05830</IncomeGreater200>
+    <EducationHighSchoolGraduate p2:type="Edm.Decimal">0.75500</EducationHighSchoolGraduate>
+    <EducationBachelorOrGreater p2:type="Edm.Decimal">0.28400</EducationBachelorOrGreater>
+    <StateAbbreviation>CA</StateAbbreviation>
+    <State>California</State>
+    <CityAbbreviation>ARTESIA</CityAbbreviation>
+    <AreaCode>562</AreaCode>
+    <City>CERRITOS</City>
+    <County>LOS ANGELES</County>
+    <CountyFIPSCode>037</CountyFIPSCode>
+    <StateFIPSCode>06</StateFIPSCode>
+    <TimeZone>8</TimeZone>
+    <IsDayLightSaving p2:type="Edm.Boolean">true</IsDayLightSaving>
+    <IsZipCodeMultiCounty p2:type="Edm.Boolean">false</IsZipCodeMultiCounty>
+    <USRegion>West</USRegion>
+    <USDivision>Pacific</USDivision>
+    <MSA>4472</MSA>
+    <MSAName>Los Angeles-Riverside-Orange County, CA</MSAName>
+    <PMSA>4480</PMSA>
+    <PMSAName>Los Angeles-Long Beach, CA PMSA</PMSAName>
+    <CSA>348</CSA>
+    <CSAName>Los Angeles-Long Beach-Riverside, CA</CSAName>
+    <CBSA>31100</CBSA>
+    <CBSAName>Los Angeles-Long Beach-Santa Ana, CA</CBSAName>
+    <CBSADivision>31084</CBSADivision>
+    <CBSAStatisticType>Metro</CBSAStatisticType>
+    <CBSADivisionName>Los Angeles-Long Beach-Glendale, CA</CBSADivisionName>
+    <TotalNumberOfBusinesses p2:type="Edm.Int32">1458</TotalNumberOfBusinesses>
+    <TotalNumberEmployees p2:type="Edm.Int32">31822</TotalNumberEmployees>
+    <FirstQuarterPayroll p2:type="Edm.Int32">248850</FirstQuarterPayroll>
+    <AnnualPayroll p2:type="Edm.Int32">1007685</AnnualPayroll>
+    <ViolentCrime p2:type="Edm.Int32">172</ViolentCrime>
+    <MurderAndManslaughter p2:type="Edm.Int32">4</MurderAndManslaughter>
+    <ForcibleRape p2:type="Edm.Int32">4</ForcibleRape>
+    <Robbery p2:type="Edm.Int32">115</Robbery>
+    <AggravatedAssault p2:type="Edm.Int32">49</AggravatedAssault>
+    <PropertyCrime p2:type="Edm.Int32">1912</PropertyCrime>
+    <Burglary p2:type="Edm.Int32">300</Burglary>
+    <LarcenyTheft p2:type="Edm.Int32">1316</LarcenyTheft>
+    <MotorVehicleTheft p2:type="Edm.Int32">296</MotorVehicleTheft>
+    <Arson p2:type="Edm.Int32">6</Arson>
+    <NearGayVillage p2:type="Edm.Boolean">false</NearGayVillage>
+  </element>
+</GetUSDemographics>
