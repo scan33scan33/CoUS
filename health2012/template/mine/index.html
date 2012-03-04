@@ -60,6 +60,7 @@ $(document).ready(function(){
 			chartData = new google.visualization.DataTable(); // Global: Use for updating chart
 			geoChart = new google.visualization.GeoChart(document.getElementById('map_div'));
 			geochartData = new google.visualization.DataTable();
+			related = $("#related_div");
 		}, // End of onDocumentReady
 		sendChange: function(sChange){
 			var self = hook;
@@ -120,6 +121,11 @@ $(document).ready(function(){
 				       ];
 			self.updateGeochart(initData);
 		}, // End of initGeochart
+		initRelated: function(dataPos,dataNeg){
+			var self = hook;
+			related.html("firstname is empty");
+			//console.log('updateChart is called');
+		}, 
 		updateGeochart: function(data){
 			var self = hook;	
 			var options = {
@@ -153,6 +159,16 @@ $(document).ready(function(){
 		}, // End of updateList
 		updateRelated: function(dataPos,dataNeg){
 			var self = hook;
+			var str = '';
+			str += "Positive Related Topics:<br/>";
+			for (var i = 0; i < dataPos.length; i++){
+				str = str + dataPos[i] + "<br/>";
+			}
+			str += "<br/>Negative Related Topics:<br/>";
+			for (var i = 0; i < dataNeg.length; i++){
+				str = str + dataPos[i] + "<br/>";
+			}
+			related.html(str);
 			//console.log('updateChart is called');
 		}, 
 	}; // End of hook
@@ -411,15 +427,8 @@ $(document).ready(function(){
 		</select>
 	</form>
 		<br/>
-		Postive Related: <br/>
-		{% for topic in postopics %}
-		{{topic}}<br/>
-		{% endfor %}
-		<br/>
-		Negative Related: <br/>
-		{% for topic in negtopics %}
-		{{topic}}<br/>
-		{% endfor %}
+		<div id="related_div">
+		</div>
 	</div>
 	<h3><a href="#">Count across U.S.</a></h3>
 	<div id="us">
