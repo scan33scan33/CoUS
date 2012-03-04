@@ -9,6 +9,7 @@ from django import forms
 from django.shortcuts import render_to_response
 from json_utils import JSONSerializer
 from mine.models import Item
+from mine.models import URLtopic
 from itertools import imap
 from xml.etree.ElementTree import parse
 
@@ -119,53 +120,26 @@ def retrieve_corrtable(yourtopic,yourattr):
     print topics_score[-10:]
     postopics = []
     negtopics = []
-    for i in range(width): postopics.append(topics_score[i+1][0])
-    for i in range(width): negtopics.append(topics_score[-i-1][0])
+    for i in range(width): 
+        topic = topics_score[i+1][0]
+        try:
+            url = URLtopic.objects.filter(topic = topic).values_list('url')[0][0]
+        except:
+            url = ""
+        print url
+        utopic = [url,topic]
+        postopics.append(utopic)
+    for i in range(width): 
+        topic = topics_score[-i-1][0]
+        try:
+            url = URLtopic.objects.filter(topic = topic).values_list('url')[0][0]
+        except:
+            url = ""
+        print url
+        utopic = [url,topic]
+        negtopics.append(utopic)
 
     return postopics, negtopics
-
-
-    arrs = Item.objects.filter(attr = yourattr).values_list('topic','value')
-    topic2value = {}
-    for i in range(len(arrs)) :
-        topic2value[arrs[i][0]] = arrs[i][1]
- 
-    alls = Item.objects.all().values_list('attr','topic','value')
-    attr_arrs_map = {} # used later
-    for arr in alls:
-        if not attr_arrs_map.has_key(arr[0]) :
-            attr_arrs_map[arr[0]] = [[arr[1],arr[2]]]
-        else :
-            attr_arrs_map[arr[0]].append([arr[1],arr[2]])
-
-    attrs_score = []
-    for attr_ in attr_arrs_map.keys() :
-        arrs = attr_arrs_map[attr_] 
-        arrA = []
-        arrB = []
-        for arr in arrs:
-            if topic2value.has_key(arr[0]):
-                arrA.append(arr[1])    
-                arrB.append(topic2value[arr[0]])
-        attrs_score.append([attr_,pearson(arrA,arrB)])
-    attrs_score = sorted(attrs_score,cmp_by_last)
-    attrs = []
-    for i in range(height): attrs.append(attrs_score[i][0])
-    for i in range(height): attrs.append(attrs_score[-i][0])
-
-    corrtable = []
-#    for attr in attrs:
-#        row = []
-#        for topic in topics:
-#            value = Item.objects.filter(attr = attr,topic = topic).values_list('value')
-#            if len(value) > 0:
-#                row.append(value[0][0])
-#            else :
-#                row.append(0)
-#        corrtable.append(row)
-
-    return attrs,topics,corrtable
-#    print corrtable 
 
 
 def index(request):
@@ -200,7 +174,7 @@ def index(request):
     yourstate = "Connecticut"
     itsstate = "Louisiana"
     yourfocus = "1-1 Persons with health insurance"
-    yourtopic = "Diabetes"
+    yourtopic = "HIV"
 
     #Check if it is just change #TODO
     try:

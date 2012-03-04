@@ -13,3 +13,7 @@ class Item(models.Model):
     #age = models.CharField(max_length=30)
     
     value = models.FloatField() 
+
+class URLtopic(models.Model):
+    topic = models.CharField(max_length=50)
+    url = models.CharField(max_length=100)
