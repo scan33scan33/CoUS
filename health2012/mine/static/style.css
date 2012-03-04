@@ -153,7 +153,30 @@ select {
 	margin: 1em 0em 0em 3em;
 }
 
-.ui-progressbar-value{ 
-	background-image: url(/static/images/pbar-ani.gif); 
-	height: 100px;
+#compare{
+	float: left;
+	margin: 1em 0em 0em 4em;
+	font-size: 30px;
+}
+
+td, th{
+	border-bottom:1px solid #CCC;
+	margin:0;
+	padding:.375em .5em;
+}
+
+img.center{
+	display: block;
+	margin: 0 auto;
+	width: 40%;
+	padding-bottom: 0.5em;
+}
+
+.org-col{
+	text-align: center;
+}
+
+.org-title{
+	color: #E17009;
+	font-weight: bold;
 }
