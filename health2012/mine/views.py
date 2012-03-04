@@ -250,6 +250,7 @@ def ajax_handler(request):
         itsstate = request.POST['itsstate']
         itsrace = request.POST['itsrace']
         yourfocus = request.POST['yourfocus']
+        yourtopic = request.POST['yourtopic']
 
 
         bars = retrieve_bars(yourstate,yourrace,itsstate,itsrace)
