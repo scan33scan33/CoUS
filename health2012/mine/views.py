@@ -66,7 +66,7 @@ def retrieve_subfocuses(yourrace,yourfocus):
     return subfocuses
 
 def retrieve_corrtable(yourtopic,yourattr):
-    width = 5
+    width = 3
 #    height = 1
 
     arrs = Item.objects.filter(topic = yourtopic).values_list('attr','value')
@@ -157,15 +157,15 @@ def index(request):
     genderlist = ['-----','Male','Female']
     edulist = ['-----','A','B','C']
     
-    
     topiclist = Item.objects.values('topic').distinct() 
     subfocuslist = Item.objects.values('subtopic').distinct() 
     statelist = Item.objects.values('state').distinct() 
-    racelist = Item.objects.values('attr').distinct()
+#    racelist = Item.objects.values('attr').distinct()
     topiclist = sorted([x[0] for x in  subfocuslist.values_list('topic')[1:]])
     subfocuslist = sorted([x[0] for x in  subfocuslist.values_list('subtopic')[1:]])
     statelist = sorted([x[0] for x in statelist.values_list('state')[1:]])
-    racelist = sorted([x[0] for x in racelist.values_list('attr')[1:]])
+#    racelist = sorted([x[0] for x in racelist.values_list('attr')[1:]])
+    racelist = ["American Indian","Asian or Pacific Islander","Black","Hispanic (of any race)","Non-Hispanic White"]
 
     yourgender = ""
     itsgender = ""
@@ -173,12 +173,12 @@ def index(request):
     youredu = ""
     itsedu = ""
 
-    yourrace = "Hispanic or Latino"# "Black or African American only"
-    itsrace = "White"
+    yourrace = "Hispanic (of any race)"# "Black or African American only"
+    itsrace = "Non-Hispanic White"
     
     yourstate = "Connecticut"
     itsstate = "Louisiana"
-    yourfocus = "1-1 Persons with health insurance (aged under 65 years)"
+    yourfocus = "1-1 Persons with health insurance"
     yourtopic = "Diabetes"
 
     #Check if it is just change #TODO
@@ -226,6 +226,7 @@ def index(request):
     bars = retrieve_bars(yourstate,yourrace,itsstate,itsrace)
     subfocuses = retrieve_subfocuses(yourrace,yourfocus)
     postopics,negtopics = retrieve_corrtable(yourtopic,'')
+    print "bars :" , bars
 
     c = Context({"yourstate":yourstate, "itsstate" : itsstate, "yourgender" : yourgender, "itsgender" : itsgender, "youredu" : youredu, "itsedu":itsedu, "yourrace": yourrace, "itsrace" : itsrace,'statelist' : statelist, 'racelist' : racelist, 'genderlist' : genderlist, 'edulist':edulist, "bars" : bars, "subfocuslist" : subfocuslist, "subfocuses" : subfocuses, "yourfocus" : yourfocus, "postopics" : postopics, "negtopics" : negtopics, "yourtopic" : yourtopic, "topiclist" : topiclist})
     return HttpResponse(t.render(c))
