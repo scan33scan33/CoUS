@@ -263,6 +263,10 @@ $(document).ready(function(){
 						$('#dialog_process').attr('style', 'color:red;')
 						.html('<br/>Sorry, we can not detect your profile.');
 					},
+					500: function(){
+						$('#dialog_process').attr('style', 'color:red;')
+						.html('<br/>Sorry, our server is busy. Please try it later.');
+					},
 				},
 			});
 		},
