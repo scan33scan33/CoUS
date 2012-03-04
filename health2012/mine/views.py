@@ -330,8 +330,9 @@ def pre_populate(request):
         d = xml_parser(IP_ADDR)
         if d is None:
             return HttpResponseNotFound()
-        for key, val in d.iteritems():
-            print key, " : ", val
+        else:
+            for key, val in d.iteritems():
+                print key, " : ", val
         yourrace = "Hispanic (of any race)"# "Black or African American only"
         itsrace = "Non-Hispanic White"
         yourstate = "Connecticut"

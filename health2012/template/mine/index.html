@@ -72,7 +72,6 @@ $(document).ready(function(){
 			var self = hook;
 			sData = $('#you_form').serialize();
 			$.post('ajax_handler', sData, function(rData){
-				console.log(rData);
 				var chartData = rData[0];
 				var geochartData = rData[1];
 				self.updateChart(chartData);
@@ -234,6 +233,7 @@ $(document).ready(function(){
 		maxPercent: 100,
 		elapsedTime: 0,
 		elapsedTimeID: 0,
+		updateBarID: 0,
 		onDocumentReady: function(){
 			var self = scan;
 			$('#dialog_process').dialog({
@@ -244,6 +244,7 @@ $(document).ready(function(){
 				show: "drop",
 				buttons: {
 					Cancel: function(){
+						clearTimeout(self.updateBarID);
 						$( this ).dialog( "close" );
 					}
 				},
@@ -261,6 +262,7 @@ $(document).ready(function(){
 					$('#dialog_process').dialog('option', 'buttons', 
 						{'OK': function(){
 							$(this).dialog('close');
+							self.getData();
 					}});
 					self.getData();
 				},
@@ -273,6 +275,8 @@ $(document).ready(function(){
 				type: 'POST',
 				success: function(rData){
 					console.log(rData);
+					Pane.hook.updateChart(rData[0]);
+					Pane.hook.updateGeochart(rData[1]);
 					$('#dialog_process').dialog('close');
 				},
 				statusCode:{
@@ -299,7 +303,7 @@ $(document).ready(function(){
 			$('#dialog_text').html(val+"%");
 			if(val < self.maxPercent){
 				bar.progressbar('option', 'value', val + 1);
-				setTimeout(self.updateBar, ((10000 - self.elapsedTime) / 100) );
+				self.updateBarID = setTimeout(self.updateBar, ((10000 - self.elapsedTime) / 100) );
 			}
 		},
 		tick: function(){
