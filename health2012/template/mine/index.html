@@ -87,9 +87,11 @@ $(document).ready(function(){
 			chartData.addColumn('number', 'You');
 			chartData.addColumn('number', 'Friend');
 			var initData = [
+					{% autoescape off %}
 					{% for bar in bars%}
 					['{{bar.0}}', {{bar.1}},{{bar.2}}],
 					{% endfor  %}
+					{% endautoescape %}
 				       ];
 			self.updateChart(initData);
 		}, // End of initChart
@@ -123,7 +125,22 @@ $(document).ready(function(){
 		}, // End of initGeochart
 		initRelated: function(dataPos,dataNeg){
 			var self = hook;
-			related.html("firstname is empty");
+			var posdata = [
+					{% autoescape off %}
+					  {% for topic in postopics %}
+					  ['{{topic.0}}','{{topic.1}}'],
+					  {% endfor %}
+					{% endautoescape %}
+					];
+			var negdata = [
+					{% autoescape off %}
+					  {% for topic in negtopics %}
+					  ['{{topic.0}}','{{topic.1}}'],
+					  {% endfor %}
+					{% endautoescape %}
+					];
+
+			self.updateRelated(posdata,negdata);
 			//console.log('updateChart is called');
 		}, 
 		updateGeochart: function(data){
@@ -160,13 +177,13 @@ $(document).ready(function(){
 		updateRelated: function(dataPos,dataNeg){
 			var self = hook;
 			var str = '';
-			str += "Positive Related Topics:<br/>";
+			str += "<b>Positive Related Topics:</b><br/>";
 			for (var i = 0; i < dataPos.length; i++){
-				str = str + dataPos[i] + "<br/>";
+				str = str + "<a href='" + dataPos[i][0] +"' target='_blank''>" + dataPos[i][1] + "</a><br/>";
 			}
-			str += "<br/>Negative Related Topics:<br/>";
+			str += "<br/> <b>Negative Related Topics:</b><br/>";
 			for (var i = 0; i < dataNeg.length; i++){
-				str = str + dataNeg[i] + "<br/>";
+				str = str + "<a href='" + dataNeg[i][0] +"' target='_blank''>" + dataNeg[i][1] + "</a><br/>";
 			}
 			related.html(str);
 			//console.log('updateChart is called');
@@ -306,6 +323,7 @@ $(document).ready(function(){
 			self.scan.tick();
 			google.setOnLoadCallback(self.hook.initChart);
 			google.setOnLoadCallback(self.hook.initGeochart);
+			google.setOnLoadCallback(self.hook.initRelated);
 		},
 	}
 	Pane.onDocumentReady();

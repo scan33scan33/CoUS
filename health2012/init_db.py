@@ -3,6 +3,7 @@ import csv
 import sys
 try:
     from mine.models import Item
+    from mine.models import URLtopic
 except:
     pass
 
@@ -12,6 +13,19 @@ if __name__ == "__main__":
     os.system('echo "import init_db" | ./manage.py shell')
     sys.exit(0)
 
+os.system('wget http://www.aiksee.com/cous/data/url_topic.csv')
+csvReader = csv.reader(open('url_topic.csv', 'rb'), delimiter=',')
+for row in csvReader:
+    try:
+        item = URLtopic()
+        #item.topic = row[0]
+        item.url = row[0]
+        item.topic = row[1]
+        item.save()
+        print row
+    except:
+        print "Error"
+os.system('rm url_topic.csv')
 
 # get datasets
 # get lines and insert into database 
@@ -21,6 +35,7 @@ for row in csvReader:
     try:
         item = Item()
         item.topic = row[0]
+        item.qtopic = row[0]
         item.subtopic = row[1]
         item.state = row[2]
         item.attr = row[3]
@@ -38,7 +53,8 @@ csvReader = csv.reader(open('result.dat', 'rb'), delimiter=',', quotechar='"')
 for row in csvReader:
     try:
         item = Item()
-        item.topic = row[0]
+        #item.topic = row[0]
+        item.qtopic = row[0]
         item.attr = row[1]
         item.value = float(row[2])
         item.save() 
