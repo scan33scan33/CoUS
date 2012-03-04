@@ -16,14 +16,8 @@ from xml.etree.ElementTree import parse
 # Compute correlation
 def pearson(x, y):
     # Assume len(x) == len(y)
-    if len(x) <= 20 or len(y) <= 20: return 0
-    # Normalize
-    sumarrA = sum(map(lambda z: abs(z), (x)))   
-    sumarrB = sum(map(lambda z: abs(z), (y)))   
-    if sumarrA == 0 or sumarrB == 0: return 0
-    x = map(lambda z: z / sumarrA, x)
-    y = map(lambda z: z / sumarrB, y)
-    
+    if len(x) <= 8 or len(y) <= 8: return 0
+   
     n = len(x)
     sum_x = float(sum(x))
     sum_y = float(sum(y))
@@ -34,6 +28,7 @@ def pearson(x, y):
     den = pow(max((sum_x_sq - pow(sum_x, 2) / n) * (sum_y_sq - pow(sum_y, 2) / n),1e-9), 0.5)
     if den == 0: return 0
     return num / den
+
 
 
 # list : (str,value), merge by str... 
@@ -53,11 +48,16 @@ def skew_merge(listA,listB):
 def cmp_by_last(a,b):
     return a[-1] > b[-1] and -1 or 1 
 
+def cmp_by_last2(a,b):
+    return a[-2] > b[-2] and -1 or 1 
+
+
 def retrieve_bars(yourstate,yourrace,itsstate,itsrace):
     # Get bars
     itemsA = Item.objects.filter(state = yourstate,attr = yourrace).values_list('topic','value')
     itemsB = Item.objects.filter(state = itsstate,attr = itsrace).values_list('topic','value')
     bars = skew_merge(itemsA,itemsB)
+    bars = sorted(bars,cmp_by_last2)
     return bars
 
 def retrieve_subfocuses(yourrace,yourfocus): 
@@ -66,18 +66,35 @@ def retrieve_subfocuses(yourrace,yourfocus):
     return subfocuses
 
 def retrieve_corrtable(yourtopic,yourattr):
+    m = {}
+    m["Access to Quality Health Services"] = "access"
+    m["Disability and Secondary Conditions"] = "disability"
+    m["Heart Disease and Stroke"] = "heart"
+    m["HIV"] = "hiv"
+    m["Injury and Violence Prevention"] = "violen"
+    m["Maternal Infant and Child Health"] = "infant"
+    m["Mental Health and Mental Disorders"] = "mental"
+    m["Physical Activity and Fitness"] = "physical"
+    m["Respiratory Diseases"] = "respir"
+    m["Substance Abuse"] = "abuse"
+    m["Cancer"] =  "cancer"
+    m["Diabetes"] = "diabetes"
+    query = m[yourtopic]
+
     width = 3
 #    height = 1
+    arrs = Item.objects.all().values_list('qtopic','attr','value')
+   
 
-    arrs = Item.objects.filter(topic = yourtopic).values_list('attr','value')
-    print arrs
     attr2value = {}
     for i in range(len(arrs)) :
-        attr2value[arrs[i][0]] = arrs[i][1]
+        if query  in arrs[i][0].lower(): 
+            attr2value[arrs[i][1]] = arrs[i][2]
  
-    alls = Item.objects.all().values_list('topic','attr','value')
+    alls = Item.objects.all().values_list('qtopic','attr','value')
     topic_arrs_map = {} # used later
     for arr in alls:
+        if len(arr[0]) == 0: continue
         if not topic_arrs_map.has_key(arr[0]) :
             topic_arrs_map[arr[0]] = [[arr[1],arr[2]]]
         else :
@@ -93,13 +110,17 @@ def retrieve_corrtable(yourtopic,yourattr):
                 arrA.append(arr[1])    
                 arrB.append(attr2value[arr[0]])
    #     print arrA,arrB
-        topics_score.append([topic_,pearson(arrA,arrB)])
+        if query in topic_.lower() and query != topic_.lower():
+            topics_score.append([topic_,99])
+        else:
+            topics_score.append([topic_,pearson(arrA,arrB)])
     topics_score = sorted(topics_score,cmp_by_last)
-    print topics_score[0:5]
+    print topics_score[0:10]
+    print topics_score[-10:]
     postopics = []
     negtopics = []
-    for i in range(width): postopics.append(topics_score[i][0])
-    for i in range(width): negtopics.append(topics_score[-i][0])
+    for i in range(width): postopics.append(topics_score[i+1][0])
+    for i in range(width): negtopics.append(topics_score[-i-1][0])
 
     return postopics, negtopics
 
@@ -337,9 +358,21 @@ def pre_populate(request):
             return HttpResponseNotFound()
         for key, val in d.iteritems():
             print key, " : ", val
-        #jsonSerializer = JSONSerializer()
-        #data = jsonSerializer.serialize([bars, subfocuses])
-        return HttpResponse('T')
+        yourrace = "Hispanic (of any race)"# "Black or African American only"
+        itsrace = "Non-Hispanic White"
+        yourstate = "Connecticut"
+        itsstate = "Louisiana"
+        yourfocus = "1-1 Persons with health insurance"
+        yourtopic = "Diabetes"
+
+        bars = retrieve_bars(yourstate,yourrace,itsstate,itsrace)
+        subfocuses = retrieve_subfocuses(yourrace,yourfocus)
+        postopics,negtopics = retrieve_corrtable(yourtopic,'')
+
+        jsonSerializer = JSONSerializer()
+        data = jsonSerializer.serialize([bars, subfocuses, postopics, negtopics])
+        return HttpResponse(data, mimetype="application/json")
+        #return HttpResponse('T')
     return HttpResponse('Incorrect Http Method.')
 
 def xml_grabber(IP_ADDR):

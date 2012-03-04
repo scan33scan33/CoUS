@@ -21,6 +21,7 @@ for row in csvReader:
     try:
         item = Item()
         item.topic = row[0]
+        item.qtopic = row[0]
         item.subtopic = row[1]
         item.state = row[2]
         item.attr = row[3]
@@ -38,7 +39,8 @@ csvReader = csv.reader(open('result.dat', 'rb'), delimiter=',', quotechar='"')
 for row in csvReader:
     try:
         item = Item()
-        item.topic = row[0]
+        #item.topic = row[0]
+        item.qtopic = row[0]
         item.attr = row[1]
         item.value = float(row[2])
         item.save() 
