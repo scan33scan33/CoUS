@@ -100,10 +100,10 @@ $(document).ready(function(){
 				chartArea: { left: 250 },
 				legend: {position: 'top', },
 				width: 1000, height: 400,
-				title: 'Counting On US',
+				title: 'Leading Health Indicators',
 				animation:{ duration: 800, easing: 'in' },
 				vAxis: {titleTextStyle: {color: 'red'}},
-				hAxis: {title: 'Dangerous Score', titleTextStyle: {color: 'red'}}
+				hAxis: {title: 'Concern Scale (1 - 10)', titleTextStyle: {color: 'red'}}
 			};
 			chartData.removeRows(0, chartData.getNumberOfRows());
 			chartData.addRows(data);
@@ -173,6 +173,15 @@ $(document).ready(function(){
 			});
 
 		}, // End of updateList
+		updateListVal: function(list_vals){
+			var self = hook;
+			var lists = $('select');
+			for(var i = 0; i < list_vals.length; i++){
+				for(var j = 0; j < lists.length; j++){
+					$(lists[j]).val(list_vals[i]);
+				}
+			}
+		}, // End of updateListVal
 		updateRelated: function(dataPos,dataNeg){
 			var self = hook;
 			var str = '';
@@ -192,7 +201,7 @@ $(document).ready(function(){
 		onDocumentReady: function(){
 			var self = effect;
 
-			// Navigating Bar 
+			// Navigating Bar Effect Plug-In
 			var $el, leftPos, newWidth;
 			$("#nav-bar").append("<li id='magic-line'></li>");
 			    
@@ -349,8 +358,8 @@ $(document).ready(function(){
 		<!--
 		<img alt="Counting on US" src="images/logo.png" height="100px"/>
 		-->
-		<img alt="Counting on US" src="http://www.aiksee.com/~minghen/logo.png" height="100px"/>
-		Counting on US</div>
+		<a href="http://countingon.us"><img alt="Counting on US" src="/static/logo.png" height="100px"/></a>
+	</div>
 
 	<div class="nav-wrap">
 
@@ -424,7 +433,7 @@ $(document).ready(function(){
 	</div>
 
 	<div id="compare">
-		Compare with
+		...compared to...
 	</div>
 
 	<div id="friend">Friend<br/>
@@ -472,7 +481,7 @@ $(document).ready(function(){
 
 	<div id="sep"></div>
 	<div id="scan_btn">
-	<a href="#" class="scan-button">Counting on US</a>
+	<a href="#" class="scan-button">Guess my health profile</a>
 	</div>
 
 	<div id="graphs">
@@ -504,17 +513,30 @@ $(document).ready(function(){
 		<div id="related_div">
 		</div>
 	</div>
-	<h3><a href="#">Count across U.S.</a></h3>
+	<h3><a href="#">Count Across U.S.</a></h3>
 	<div id="us">
+		<select name="yourfocus">
+		{% for subfocus in subfocuslist %}
+		{% if yourfocus == subfocus %}
+		<option value="{{subfocus}}" selected>{{subfocus}}</option>
+		{% else %}
+		<option value="{{subfocus}}">{{subfocus}}</option>
+		{% endif %}
+		{% endfor %}
+		</select>
+		<center>
 		<div id="map">
 			<div id="map_container">
 				<div id="map_div"></div>
 			</div>
 		</div>
+		</center>
 	</div>
 </div>
 <div id="footer">
-Counting on US - Making public health data personal - health2dev challenge - 2012
+Counting on US: Making public health data personal.<br />
+Designed and created as a part of the Health 2.0<br />
+Developer Challenge, 2012<br />
 </div>
 
 </div>

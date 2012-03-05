@@ -67,6 +67,7 @@ body {
 	float: left;
 	width: 295px;
 	text-align: center;
+	font-size: 30px;
 }
 
 #graphs {
@@ -80,6 +81,7 @@ body {
 	float: right;
 	width: 295px;
 	text-align: center;
+	font-size: 30px;
 }
 
 #sep {
@@ -150,12 +152,12 @@ select {
 }
 
 #scan_btn{
-	margin: 1em 0em 0em 3em;
+	margin: 1em 0em 0em 1.5em;
 }
 
 #compare{
 	float: left;
-	margin: 1em 0em 0em 4em;
+	margin: 1em 0em 0em 3em;
 	font-size: 30px;
 }
 
@@ -179,4 +181,9 @@ img.center{
 .org-title{
 	color: #E17009;
 	font-weight: bold;
+}
+
+#collaborators_text{
+	font-size: 20px;
+	margin:1em 0em 1em 2em;
 }

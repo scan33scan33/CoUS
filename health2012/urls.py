@@ -18,12 +18,12 @@ urlpatterns = patterns('',
     url(r'^mine/contact$', 'mine.views.contact'),
     url(r'^mine/collaborators$', 'mine.views.collaborators'),
     url(r'^mine/pre_populate$', 'mine.views.pre_populate'),
-    # url(r'^$', 'health2012.views.home', name='home'),
-    # url(r'^health2012/', include('health2012.foo.urls')),
+    # url(r'^mine/$', 'health2012.views.home', name='home'),
+    # url(r'^mine/health2012/', include('health2012.foo.urls')),
 
     # Uncomment the admin/doc line below to enable admin documentation:
-    # url(r'^admin/doc/', include('django.contrib.admindocs.urls')),
+    # url(r'^mine/admin/doc/', include('django.contrib.admindocs.urls')),
 
     # Uncomment the next line to enable the admin:
-    # url(r'^admin/', include(admin.site.urls)),
+    # url(r'^mine/admin/', include(admin.site.urls)),
 )
