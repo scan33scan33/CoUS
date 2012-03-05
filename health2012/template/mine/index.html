@@ -173,6 +173,15 @@ $(document).ready(function(){
 			});
 
 		}, // End of updateList
+		updateListVal: function(list_vals){
+			var self = hook;
+			var lists = $('select');
+			for(var i = 0; i < list_vals.length; i++){
+				for(var j = 0; j < lists.length; j++){
+					$(lists[j]).val(list_vals[i]);
+				}
+			}
+		}, // End of updateListVal
 		updateRelated: function(dataPos,dataNeg){
 			var self = hook;
 			var str = '';
