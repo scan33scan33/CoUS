@@ -277,6 +277,7 @@ $(document).ready(function(){
 					console.log(rData);
 					Pane.hook.updateChart(rData[0]);
 					Pane.hook.updateGeochart(rData[1]);
+					Pane.hook.updateRelated(rData[2],rData[3]);
 					$('#dialog_process').dialog('close');
 				},
 				statusCode:{
@@ -388,6 +389,29 @@ $(document).ready(function(){
 		{% endfor %}
 		</select>
 
+
+		<select name="yourgender" action="index">
+		{% for gender in genderlist %}
+		{% if yourgender == gender %}
+		<option value="{{gender}}" selected>{{gender}}</option>
+		{% else %}
+		<option value="{{gender}}" >{{gender}}</option>
+		{% endif %}
+		{% endfor %}
+		</select>
+
+		<select name="youredu">
+		{% for edu in edulist %}
+		{% if youredu == edu %}
+		<option value="{{edu}}" selected>{{edu}}</option>
+		{% else %}
+		<option value="{{edu}}" >{{edu}}</option>
+		{% endif %}
+		{% endfor %}
+		</select>
+
+
+
 		<select name="yourfocus">
 		{% for subfocus in subfocuslist %}
 		{% if yourfocus == subfocus %}
@@ -423,6 +447,27 @@ $(document).ready(function(){
 		{% endif %}
 		{% endfor %}
 		</select>
+
+		<select name="itsgender" action="index">
+		{% for gender in genderlist %}
+		{% if itsgender == gender %}
+		<option value="{{gender}}" selected>{{gender}}</option>
+		{% else %}
+		<option value="{{gender}}" >{{gender}}</option>
+		{% endif %}
+		{% endfor %}
+		</select>
+
+		<select name="itsedu">
+		{% for edu in edulist %}
+		{% if itsedu == edu %}
+		<option value="{{edu}}" selected>{{edu}}</option>
+		{% else %}
+		<option value="{{edu}}" >{{edu}}</option>
+		{% endif %}
+		{% endfor %}
+		</select>
+
 	</div>
 
 	<div id="sep"></div>
