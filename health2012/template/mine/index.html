@@ -175,20 +175,19 @@ $(document).ready(function(){
 		updateListVal: function(list_vals){
 			var self = hook;
 			var lists = $('select');
-			for(var i = 0; i < list_vals.length; i++){
-				for(var j = 0; j < lists.length; j++){
-					$(lists[j]).val(list_vals[i]);
-				}
+			for(var i = 0; i < lists.length; i++){
+				$(lists[i]).val(list_vals[i]);
 			}
+			console.log('updateListVal is called.');
 		}, // End of updateListVal
 		updateRelated: function(dataPos,dataNeg){
 			var self = hook;
 			var str = '';
-			str += "<b>Positive Related Topics:</b><br/>";
+			str += "<b>Related Topics:</b><br/>";
 			for (var i = 0; i < dataPos.length; i++){
 				str = str + "<a href='" + dataPos[i][0] +"' target='_blank''>" + dataPos[i][1] + "</a><br/>";
 			}
-			str += "<br/> <b>Negative Related Topics:</b><br/>";
+			//str += "<br/> <b>Negative Related Topics:</b><br/>";
 			for (var i = 0; i < dataNeg.length; i++){
 				str = str + "<a href='" + dataNeg[i][0] +"' target='_blank''>" + dataNeg[i][1] + "</a><br/>";
 			}
@@ -286,6 +285,7 @@ $(document).ready(function(){
 					Pane.hook.updateChart(rData[0]);
 					Pane.hook.updateGeochart(rData[1]);
 					Pane.hook.updateRelated(rData[2],rData[3]);
+					Pane.hook.updateListVal(rData[4]);
 					$('#dialog_process').dialog('close');
 				},
 				statusCode:{

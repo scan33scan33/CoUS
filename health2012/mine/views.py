@@ -55,7 +55,7 @@ def skew_merge(listA,listB):
     return listC
 
 def cmp_by_last(a,b):
-    return a[-1] > b[-1] and -1 or 1 
+    return float(a[-1]) > float(b[-1]) and -1 or 1 
 
 def cmp_by_last2(a,b):
     return a[-2] > b[-2] and -1 or 1 
@@ -349,23 +349,35 @@ def pre_populate(request):
         else:
             for key, val in d.iteritems():
                 print key, " : ", val
+
+
+        pop_race = [["American Indian",d["IndianPopulation"]],["Asian or Pacific Islander",d["AsianPopulation"]],["Black",d["BlackPopulation"]],["Hispanic (of any race)",d["HispanicPopulation"]],["Non-Hispanic White",d["WhitePopulation"]]]
+        pop_race = sorted(pop_race,cmp_by_last)
+        print pop_race
+        pop_gender = [["Male",d["MalePopulation"]],["Female",d["FemalePopulation"]]]
+        pop_gender = sorted(pop_gender,cmp_by_last)
+        pop_edu = [["Less than High School",0],["High School Graduate/Some College/Associate's Degree",d["EducationHighSchoolGraduate"]],["Bachelor's Degree or More",d["EducationBachelorOrGreater"]]]
+        pop_edu = sorted(pop_edu,cmp_by_last)
+
         state = d["State"] 
-        yourrace = "Non-Hispanic White"
-        itsrace = "Asian or Pacific Islander"
+        yourrace = pop_race[0][0]
+        itsrace = pop_race[1][0]
         yourstate = state
         itsstate = state
-        youredu = "Bachelor's Degree or More"
-        itsedu = "Bachelor's Degree or More"
-        yourgender = "Male"
-        itsgender = "Female"
+        youredu = pop_edu[0][0]
+        itsedu = pop_edu[1][0]
+        yourgender = pop_gender[0][0]
+        itsgender = pop_gender[1][0]
         yourfocus = "1-1 Persons with health insurance"
+        
 
         bars = retrieve_bars(yourstate,yourrace,yourgender,youredu,itsstate,itsrace,itsgender,itsedu)
         subfocuses = retrieve_subfocuses(yourrace,yourfocus)
         yourtopic = bars[0][0]
         postopics,negtopics = retrieve_corrtable(yourtopic,'')
 
-        youform_data = [yourstate,yourrace,yourgender,youredu,yourfocus,itsstate,itsrace,itsgender,itsedu,yourtopic]
+        youform_data = [yourstate,yourrace,yourgender,youredu,itsstate,itsrace,itsgender,itsedu,yourtopic,yourfocus]
+        print "form",youform_data
 
         jsonSerializer = JSONSerializer()
         data = jsonSerializer.serialize([bars, subfocuses, postopics, negtopics,youform_data])
