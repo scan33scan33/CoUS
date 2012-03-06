@@ -21,6 +21,10 @@ for row in csvReader:
         #item.topic = row[0]
         item.url = row[0]
         item.topic = row[1]
+        if len(row[2]) == 0: 
+            item.shorttopic = row[1]
+        else:
+            item.shorttopic = row[2].strip()
         item.save()
         print row
     except:

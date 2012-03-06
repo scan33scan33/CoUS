@@ -13,6 +13,14 @@ from mine.models import URLtopic
 from itertools import imap
 from xml.etree.ElementTree import parse
 
+
+genderlist = ['Male','Female']
+racelist = ["American Indian","Asian or Pacific Islander","Black","Hispanic (of any race)","Non-Hispanic White"]
+edulist = ["Less than High School","High School Graduate/Some College/Associate's Degree","Bachelor's Degree or More"]
+
+genderprior = {genderlist[0] : 1.01, genderlist[1] : 0.97}
+eduprior = {edulist[0] : 1.05, edulist[1] : 1, edulist[2] : 0.95}
+
 # utility functions
 # Compute correlation
 def pearson(x, y):
@@ -53,10 +61,13 @@ def cmp_by_last2(a,b):
     return a[-2] > b[-2] and -1 or 1 
 
 
-def retrieve_bars(yourstate,yourrace,itsstate,itsrace):
+def retrieve_bars(yourstate,yourrace,yourgender,youredu,itsstate,itsrace,itsgender,itsedu):
     # Get bars
+    # raceprior , eduprior
     itemsA = Item.objects.filter(state = yourstate,attr = yourrace).values_list('topic','value')
+    itemsA = map(lambda x: [x[0],x[1]*genderprior[yourgender]*eduprior[youredu]],itemsA)
     itemsB = Item.objects.filter(state = itsstate,attr = itsrace).values_list('topic','value')
+    itemsB = map(lambda x: [x[0],x[1]*genderprior[itsgender]*eduprior[itsedu]],itemsB)
     bars = skew_merge(itemsA,itemsB)
     bars = sorted(bars,cmp_by_last2)
     return bars
@@ -120,25 +131,28 @@ def retrieve_corrtable(yourtopic,yourattr):
     print topics_score[-10:]
     postopics = []
     negtopics = []
-    for i in range(width): 
+
+    j = 0
+    for i in range(10): 
+        if j == width: break 
         topic = topics_score[i+1][0]
         try:
-            url = URLtopic.objects.filter(topic = topic).values_list('url')[0][0]
+            utopic = list(URLtopic.objects.filter(topic = topic).values_list('url','shorttopic')[0])
+            j += 1
         except:
-            url = ""
-        print url
-        utopic = [url,topic]
+            continue
         postopics.append(utopic)
-    for i in range(width): 
+    j = 0
+    for i in range(10): 
+        if j == width: break 
         topic = topics_score[-i-1][0]
         try:
-            url = URLtopic.objects.filter(topic = topic).values_list('url')[0][0]
+            utopic = list(URLtopic.objects.filter(topic = topic).values_list('url','shorttopic')[0])
+            j += 1
         except:
-            url = ""
-        print url
-        utopic = [url,topic]
+            continue
         negtopics.append(utopic)
-
+    print "return",postopics,negtopics
     return postopics, negtopics
 
 
@@ -147,10 +161,6 @@ def index(request):
     xml_grabber(IP_ADDR)
 #    latest_poll_list = Poll.objects.all().order_by('-pub_date')[:5]
     t = loader.get_template('mine/index.html')
-    statelist = ['-----','NY','NJ']
-    racelist = ['-----','Asian','Native American']
-    genderlist = ['-----','Male','Female']
-    edulist = ['-----','A','B','C']
     
     topiclist = Item.objects.values('topic').distinct() 
     subfocuslist = Item.objects.values('subtopic').distinct() 
@@ -160,13 +170,12 @@ def index(request):
     subfocuslist = sorted([x[0] for x in  subfocuslist.values_list('subtopic')[1:]])
     statelist = sorted([x[0] for x in statelist.values_list('state')[1:]])
 #    racelist = sorted([x[0] for x in racelist.values_list('attr')[1:]])
-    racelist = ["American Indian","Asian or Pacific Islander","Black","Hispanic (of any race)","Non-Hispanic White"]
 
-    yourgender = ""
-    itsgender = ""
+    yourgender = "Male"
+    itsgender = "Female"
 
-    youredu = ""
-    itsedu = ""
+    youredu = edulist[-1]
+    itsedu = edulist[-1]
 
     yourrace = "Hispanic (of any race)"# "Black or African American only"
     itsrace = "Non-Hispanic White"
@@ -218,7 +227,7 @@ def index(request):
         pass
 
 
-    bars = retrieve_bars(yourstate,yourrace,itsstate,itsrace)
+    bars = retrieve_bars(yourstate,yourrace,yourgender,youredu,itsstate,itsrace,itsgender,itsedu)
     subfocuses = retrieve_subfocuses(yourrace,yourfocus)
     postopics,negtopics = retrieve_corrtable(yourtopic,'')
     print "bars :" , bars
@@ -241,6 +250,10 @@ def ajax_handler(request):
 
         print request.POST
 
+        yourgender = request.POST['yourgender']
+        youredu = request.POST['youredu']
+        itsgender = request.POST['itsgender']
+        itsedu = request.POST['itsedu']
         yourstate = request.POST['yourstate']
         yourrace = request.POST['yourrace']
         itsstate = request.POST['itsstate']
@@ -249,9 +262,12 @@ def ajax_handler(request):
         yourtopic = request.POST['yourtopic']
 
 
-        bars = retrieve_bars(yourstate,yourrace,itsstate,itsrace)
+        bars = retrieve_bars(yourstate,yourrace,yourgender,youredu,itsstate,itsrace,itsgender,itsedu)
         subfocuses = retrieve_subfocuses(yourrace,yourfocus)
+        print "posp"
         postopics,negtopics = retrieve_corrtable(yourtopic,'')
+
+        print "pos", postopics
 
         jsonSerializer = JSONSerializer()
         data = jsonSerializer.serialize([bars, subfocuses, postopics, negtopics])
@@ -333,19 +349,26 @@ def pre_populate(request):
         else:
             for key, val in d.iteritems():
                 print key, " : ", val
-        yourrace = "Hispanic (of any race)"# "Black or African American only"
-        itsrace = "Non-Hispanic White"
-        yourstate = "Connecticut"
-        itsstate = "Louisiana"
+        state = d["State"] 
+        yourrace = "Non-Hispanic White"
+        itsrace = "Asian or Pacific Islander"
+        yourstate = state
+        itsstate = state
+        youredu = "Bachelor's Degree or More"
+        itsedu = "Bachelor's Degree or More"
+        yourgender = "Male"
+        itsgender = "Female"
         yourfocus = "1-1 Persons with health insurance"
-        yourtopic = "Diabetes"
 
-        bars = retrieve_bars(yourstate,yourrace,itsstate,itsrace)
+        bars = retrieve_bars(yourstate,yourrace,yourgender,youredu,itsstate,itsrace,itsgender,itsedu)
         subfocuses = retrieve_subfocuses(yourrace,yourfocus)
+        yourtopic = bars[0][0]
         postopics,negtopics = retrieve_corrtable(yourtopic,'')
 
+        youform_data = [yourstate,yourrace,yourgender,youredu,yourfocus,itsstate,itsrace,itsgender,itsedu,yourtopic]
+
         jsonSerializer = JSONSerializer()
-        data = jsonSerializer.serialize([bars, subfocuses, postopics, negtopics])
+        data = jsonSerializer.serialize([bars, subfocuses, postopics, negtopics,youform_data])
         return HttpResponse(data, mimetype="application/json")
         #return HttpResponse('T')
     return HttpResponse('Incorrect Http Method.')
