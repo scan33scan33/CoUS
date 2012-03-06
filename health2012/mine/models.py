@@ -16,4 +16,5 @@ class Item(models.Model):
 
 class URLtopic(models.Model):
     topic = models.CharField(max_length=50)
+    shorttopic = models.CharField(max_length=50)
     url = models.CharField(max_length=100)

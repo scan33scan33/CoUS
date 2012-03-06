@@ -131,25 +131,28 @@ def retrieve_corrtable(yourtopic,yourattr):
     print topics_score[-10:]
     postopics = []
     negtopics = []
-    for i in range(width): 
+
+    j = 0
+    for i in range(10): 
+        if j == width: break 
         topic = topics_score[i+1][0]
         try:
-            url = URLtopic.objects.filter(topic = topic).values_list('url')[0][0]
+            utopic = list(URLtopic.objects.filter(topic = topic).values_list('url','shorttopic')[0])
+            j += 1
         except:
-            url = ""
-        print url
-        utopic = [url,topic]
+            continue
         postopics.append(utopic)
-    for i in range(width): 
+    j = 0
+    for i in range(10): 
+        if j == width: break 
         topic = topics_score[-i-1][0]
         try:
-            url = URLtopic.objects.filter(topic = topic).values_list('url')[0][0]
+            utopic = list(URLtopic.objects.filter(topic = topic).values_list('url','shorttopic')[0])
+            j += 1
         except:
-            url = ""
-        print url
-        utopic = [url,topic]
+            continue
         negtopics.append(utopic)
-
+    print "return",postopics,negtopics
     return postopics, negtopics
 
 
@@ -261,7 +264,10 @@ def ajax_handler(request):
 
         bars = retrieve_bars(yourstate,yourrace,yourgender,youredu,itsstate,itsrace,itsgender,itsedu)
         subfocuses = retrieve_subfocuses(yourrace,yourfocus)
+        print "posp"
         postopics,negtopics = retrieve_corrtable(yourtopic,'')
+
+        print "pos", postopics
 
         jsonSerializer = JSONSerializer()
         data = jsonSerializer.serialize([bars, subfocuses, postopics, negtopics])
@@ -359,8 +365,10 @@ def pre_populate(request):
         yourtopic = bars[0][0]
         postopics,negtopics = retrieve_corrtable(yourtopic,'')
 
+        youform_data = [yourstate,yourrace,yourgender,youredu,yourfocus,itsstate,itsrace,itsgender,itsedu,yourtopic]
+
         jsonSerializer = JSONSerializer()
-        data = jsonSerializer.serialize([bars, subfocuses, postopics, negtopics])
+        data = jsonSerializer.serialize([bars, subfocuses, postopics, negtopics,youform_data])
         return HttpResponse(data, mimetype="application/json")
         #return HttpResponse('T')
     return HttpResponse('Incorrect Http Method.')

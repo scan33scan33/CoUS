@@ -171,7 +171,6 @@ $(document).ready(function(){
 					);
 				}
 			});
-
 		}, // End of updateList
 		updateListVal: function(list_vals){
 			var self = hook;
@@ -419,17 +418,6 @@ $(document).ready(function(){
 		{% endfor %}
 		</select>
 
-
-
-		<select name="yourfocus">
-		{% for subfocus in subfocuslist %}
-		{% if yourfocus == subfocus %}
-		<option value="{{subfocus}}" selected>{{subfocus}}</option>
-		{% else %}
-		<option value="{{subfocus}}">{{subfocus}}</option>
-		{% endif %}
-		{% endfor %}
-		</select>
 	</div>
 
 	<div id="compare">
