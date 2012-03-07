@@ -57,8 +57,12 @@ csvReader = csv.reader(open('result.dat', 'rb'), delimiter=',', quotechar='"')
 for row in csvReader:
     try:
         item = Item()
-        #item.topic = row[0]
         item.qtopic = row[0]
+        if row[0][0].isupper():
+            item.topic = row[0]
+#        if row[0][0].isupper() and len(row[0]) < 20 and float(row[2]) < 3:
+        if "vaccin" in row[0] and len(row[0]) < 25 and float(row[2]) < 5:
+            item.state = "Wildcard"
         item.attr = row[1]
         item.value = float(row[2])
         item.save() 

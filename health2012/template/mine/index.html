@@ -114,7 +114,7 @@ $(document).ready(function(){
 		initGeochart: function(){
 			var self = hook;	      
 			geochartData.addColumn('string', 'State');
-			geochartData.addColumn('number', '24-1b Deaths from asthma ...');
+			geochartData.addColumn('number', '{{yourfocus}}');
 			var initData = [
 					  {% for subfocus in subfocuses %}
 					  ['{{subfocus.0}}' , {{subfocus.1}}],
@@ -152,6 +152,10 @@ $(document).ready(function(){
 			        width: 556,
 			        height: 347}
 			};
+			geochartData.removeColumns(0, 2);
+			geochartData.addColumn('string', 'State');
+			geochartData.addColumn('number', $('#yourfocus').val());
+
 			geochartData.removeRows(0, geochartData.getNumberOfRows());
 			geochartData.addRows(data);
 			geoChart.draw(geochartData, options);
@@ -503,7 +507,7 @@ $(document).ready(function(){
 	</div>
 	<h3><a href="#">Count Across U.S.</a></h3>
 	<div id="us">
-		<select name="yourfocus">
+		<select name="yourfocus" id="yourfocus">
 		{% for subfocus in subfocuslist %}
 		{% if yourfocus == subfocus %}
 		<option value="{{subfocus}}" selected>{{subfocus}}</option>

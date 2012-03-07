@@ -3,6 +3,7 @@ import re
 import csv
 import urllib
 import subprocess
+import random
 from django.http import HttpResponse, HttpResponseNotFound
 from django.template import Context, loader
 from django import forms
@@ -64,13 +65,17 @@ def cmp_by_last2(a,b):
 def retrieve_bars(yourstate,yourrace,yourgender,youredu,itsstate,itsrace,itsgender,itsedu):
     # Get bars
     # raceprior , eduprior
-    itemsA = Item.objects.filter(state = yourstate,attr = yourrace).values_list('topic','value')
+    itemsA = Item.objects.filter(state__in = [yourstate,"Wildcard"],attr = yourrace).values_list('topic','value') 
     itemsA = map(lambda x: [x[0],x[1]*genderprior[yourgender]*eduprior[youredu]],itemsA)
-    itemsB = Item.objects.filter(state = itsstate,attr = itsrace).values_list('topic','value')
+    itemsB = Item.objects.filter(state__in = [itsstate,"Wildcard"],attr = itsrace).values_list('topic','value')
     itemsB = map(lambda x: [x[0],x[1]*genderprior[itsgender]*eduprior[itsedu]],itemsB)
     bars = skew_merge(itemsA,itemsB)
     bars = sorted(bars,cmp_by_last2)
-    return bars
+    newbars = []
+    for bar in bars:
+        if bar[-1] > 0 and bar[-2] > 0:
+            newbars.append(bar)
+    return newbars
 
 def retrieve_subfocuses(yourrace,yourfocus): 
     subfocuses = Item.objects.filter(attr = yourrace, subtopic = yourfocus).values_list('state','value') 
@@ -91,7 +96,10 @@ def retrieve_corrtable(yourtopic,yourattr):
     m["Substance Abuse"] = "abuse"
     m["Cancer"] =  "cancer"
     m["Diabetes"] = "diabetes"
-    query = m[yourtopic]
+    if m.has_key(yourtopic):
+        query = m[yourtopic]
+    else:
+        query = yourtopic
 
     width = 3
 #    height = 1
@@ -100,8 +108,9 @@ def retrieve_corrtable(yourtopic,yourattr):
 
     attr2value = {}
     for i in range(len(arrs)) :
-        if query  in arrs[i][0].lower(): 
-            attr2value[arrs[i][1]] = arrs[i][2]
+        if query.lower()  in arrs[i][0].lower(): 
+            attr2value[arrs[i][1]] = arrs[i][2] 
+    print "attr2value", attr2value
  
     alls = Item.objects.all().values_list('qtopic','attr','value')
     topic_arrs_map = {} # used later
@@ -125,7 +134,7 @@ def retrieve_corrtable(yourtopic,yourattr):
         if query in topic_.lower() and query != topic_.lower():
             topics_score.append([topic_,99])
         else:
-            topics_score.append([topic_,pearson(arrA,arrB)])
+            topics_score.append([topic_,pearson(arrA,arrB)+random.random()*0.01])
     topics_score = sorted(topics_score,cmp_by_last)
     print topics_score[0:10]
     print topics_score[-10:]
@@ -162,11 +171,11 @@ def index(request):
 #    latest_poll_list = Poll.objects.all().order_by('-pub_date')[:5]
     t = loader.get_template('mine/index.html')
     
-    topiclist = Item.objects.values('topic').distinct() 
     subfocuslist = Item.objects.values('subtopic').distinct() 
     statelist = Item.objects.values('state').distinct() 
 #    racelist = Item.objects.values('attr').distinct()
     topiclist = sorted([x[0] for x in  subfocuslist.values_list('topic')[1:]])
+#    topiclist = [x for x in topiclist if "vacci" not in x.lower()]
     subfocuslist = sorted([x[0] for x in  subfocuslist.values_list('subtopic')[1:]])
     statelist = sorted([x[0] for x in statelist.values_list('state')[1:]])
 #    racelist = sorted([x[0] for x in racelist.values_list('attr')[1:]])
