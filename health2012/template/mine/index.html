@@ -232,11 +232,17 @@ $(document).ready(function(){
 				});    
 			});
 
+			// Accordion_intro
+			$('#accordion_intro').accordion({
+				autoHeight: false,
+				navigation: true,
+			});
 			// Accordion
 			$('#accordion').accordion({
 				autoHeight: false,
 				navigation: true,
 				collapsible: true,
+				active: false,
 			});
 		}, // End of onDocumentReady
 	}; // End of effect
@@ -375,7 +381,15 @@ $(document).ready(function(){
             <li><a href="contact">Contact</a></li>
     	</div>
 
-	
+	<div id="accordion_intro">
+		<h3><a href="#">Introduction</a></h3>
+		<div id="intro_text">
+			CountingOnUS is a peer-to-peer Leading Health Indicator database.
+			<br />
+			<br />
+			Compare your health profile to that of a loved one and receive an easy-to-understand score showing which health risks you should be most aware of. Then discover the best public health organizations fighting to solve these problems in our "Learn More" section.
+		</div>
+	</div>
 <form id="you_form" action="index" method="post">
 <div id="individual">
 	<div id="you">
