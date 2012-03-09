@@ -100,7 +100,7 @@ $(document).ready(function(){
 			var self = hook;
 			var options = {
 				chartArea: { left: 250 },
-				legend: {position: 'top', },
+				legend: {position: 'top' },
 				width: 1000, height: 400,
 				title: 'Leading Health Indicators',
 				animation:{ duration: 800, easing: 'in' },
@@ -202,6 +202,7 @@ $(document).ready(function(){
 		}, // End of updateListVal
 		updateRelated: function(dataPos,dataNeg){
 			var self = hook;
+			var related = $("#related_div");
 			var str = '';
 			str += "<b>Related Topics:</b><br/>";
 			for (var i = 0; i < dataPos.length; i++){
@@ -212,7 +213,6 @@ $(document).ready(function(){
 				str = str + "<a href='" + dataNeg[i][0] +"' target='_blank''>" + dataNeg[i][1] + "</a><br/>";
 			}
 			related.html(str);
-			//console.log('updateChart is called');
 		},
 		updateLogo: function(logos){
 			var self = hook;
@@ -261,16 +261,16 @@ $(document).ready(function(){
 			// Accordion_intro
 			$('#accordion_intro').accordion({
 				autoHeight: false,
-				navigation: true,
+				navigation: true
 			});
 			// Accordion
 			$('#accordion').accordion({
 				autoHeight: false,
 				navigation: true,
 				collapsible: true,
-				active: false,
+				active: false
 			});
-		}, // End of onDocumentReady
+		} // End of onDocumentReady
 	}; // End of effect
 	var scan = {
 		maxPercent: 100,
@@ -290,7 +290,7 @@ $(document).ready(function(){
 						clearTimeout(self.updateBarID);
 						$( this ).dialog( "close" );
 					}
-				},
+				}
 			});
 			$('#dialog_process').dialog('close');
 			$('.scan-button').click(function(){
@@ -308,7 +308,7 @@ $(document).ready(function(){
 							self.getData();
 					}});
 					self.getData();
-				},
+				}
 			});
 		},
 		getData: function(){
@@ -332,8 +332,8 @@ $(document).ready(function(){
 					500: function(){
 						$('#dialog_process').attr('style', 'color:red;')
 						.html('<br/>Sorry, our server is busy. Please try it later.');
-					},
-				},
+					}
+				}
 			});
 		},
 		setPercent: function(percent){
@@ -358,7 +358,7 @@ $(document).ready(function(){
 				self.elapsedTime += 1000;
 				self.elapsedTimeID = setTimeout(self.tick, 1000);
 			}
-		},
+		}
 	};
 	Pane = {
 		hook: hook,
@@ -374,11 +374,17 @@ $(document).ready(function(){
 			google.setOnLoadCallback(self.hook.initGeochart);
 			google.setOnLoadCallback(self.hook.initRelated);
 			google.setOnLoadCallback(self.hook.initLogo);
-		},
+		}
 	}
 	Pane.onDocumentReady();
 })(jQuery);
 });
+</script>
+
+<script type="text/javascript">
+			if(0){
+				alert("We detected that your browser is Internet Explorer. We apologize that we are not fully compatible with IE. Please use Google Chrome or Mozilla Firefox to have the comfortable user experience. Thank you.");
+			}
 </script>
 
 </head>

@@ -4,7 +4,7 @@ import csv
 import urllib
 import subprocess
 import random
-from django.http import HttpResponse, HttpResponseNotFound
+from django.http import HttpResponse, HttpResponseNotFound, HttpResponseRedirect
 from django.template import Context, loader
 from django import forms
 from django.shortcuts import render_to_response
@@ -447,3 +447,6 @@ def xml_parser(IP_ADDR):
     except IndexError, e:
         print e
         return None
+
+def video(request):
+    return HttpResponseRedirect('http://youtu.be/IsrOg07_s9A')
