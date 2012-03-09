@@ -213,8 +213,6 @@ $(document).ready(function(){
 				str = str + "<a href='" + dataNeg[i][0] +"' target='_blank''>" + dataNeg[i][1] + "</a><br/>";
 			}
 			related.html(str);
-			//console.log('updateChart is called');
-		}
 		},
 		updateLogo: function(logos){
 			var self = hook;
@@ -375,9 +373,8 @@ $(document).ready(function(){
 			google.setOnLoadCallback(self.hook.initChart);
 			google.setOnLoadCallback(self.hook.initGeochart);
 			google.setOnLoadCallback(self.hook.initRelated);
-		}
 			google.setOnLoadCallback(self.hook.initLogo);
-		},
+		}
 	}
 	Pane.onDocumentReady();
 })(jQuery);
