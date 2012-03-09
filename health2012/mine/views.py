@@ -10,6 +10,7 @@ from django import forms
 from django.shortcuts import render_to_response
 from json_utils import JSONSerializer
 from mine.models import Item
+from mine.models import Logo
 from mine.models import URLtopic
 from itertools import imap
 from xml.etree.ElementTree import parse
@@ -165,6 +166,18 @@ def retrieve_corrtable(yourtopic,yourattr):
     return postopics, negtopics
 
 
+def retrieve_company(attr):
+    # Get bars
+    # raceprior , eduprior
+    alllogos = Logo.objects.all()
+    logos = []
+    for logo in alllogos:
+        if logo.attr in attr and len(logo.logopath) > 1:
+            logos.append([logo.url,logo.logopath])
+    return logos
+
+
+
 def index(request):
     IP_ADDR = request.META['REMOTE_ADDR']
     xml_grabber(IP_ADDR)
@@ -239,9 +252,9 @@ def index(request):
     bars = retrieve_bars(yourstate,yourrace,yourgender,youredu,itsstate,itsrace,itsgender,itsedu)
     subfocuses = retrieve_subfocuses(yourrace,yourfocus)
     postopics,negtopics = retrieve_corrtable(yourtopic,'')
-    print "bars :" , bars
+    logos = retrieve_company(yourtopic)
 
-    c = Context({"yourstate":yourstate, "itsstate" : itsstate, "yourgender" : yourgender, "itsgender" : itsgender, "youredu" : youredu, "itsedu":itsedu, "yourrace": yourrace, "itsrace" : itsrace,'statelist' : statelist, 'racelist' : racelist, 'genderlist' : genderlist, 'edulist':edulist, "bars" : bars, "subfocuslist" : subfocuslist, "subfocuses" : subfocuses, "yourfocus" : yourfocus, "postopics" : postopics, "negtopics" : negtopics, "yourtopic" : yourtopic, "topiclist" : topiclist})
+    c = Context({"yourstate":yourstate, "itsstate" : itsstate, "yourgender" : yourgender, "itsgender" : itsgender, "youredu" : youredu, "itsedu":itsedu, "yourrace": yourrace, "itsrace" : itsrace,'statelist' : statelist, 'racelist' : racelist, 'genderlist' : genderlist, 'edulist':edulist, "bars" : bars, "subfocuslist" : subfocuslist, "subfocuses" : subfocuses, "yourfocus" : yourfocus, "postopics" : postopics, "negtopics" : negtopics, "yourtopic" : yourtopic, "topiclist" : topiclist, "logos" : logos})
     return HttpResponse(t.render(c))
 
 def field_filter(request):
@@ -275,11 +288,12 @@ def ajax_handler(request):
         subfocuses = retrieve_subfocuses(yourrace,yourfocus)
         print "posp"
         postopics,negtopics = retrieve_corrtable(yourtopic,'')
+        logos = retrieve_company(yourtopic)
 
         print "pos", postopics
 
         jsonSerializer = JSONSerializer()
-        data = jsonSerializer.serialize([bars, subfocuses, postopics, negtopics])
+        data = jsonSerializer.serialize([bars, subfocuses, postopics, negtopics,logos])
         return HttpResponse(data, mimetype="application/json")
     return HttpResponse('Incorrect Http Method.')
 

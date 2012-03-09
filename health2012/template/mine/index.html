@@ -61,6 +61,7 @@ $(document).ready(function(){
 			geoChart = new google.visualization.GeoChart(document.getElementById('map_div'));
 			geochartData = new google.visualization.DataTable();
 			related = $("#related_div");
+			logopane = $("#logopane_div");
 		}, // End of onDocumentReady
 		sendChange: function(sChange){
 			var self = hook;
@@ -77,6 +78,7 @@ $(document).ready(function(){
 				self.updateChart(chartData);
 				self.updateGeochart(geochartData);
 				self.updateRelated(rData[2],rData[3]);
+				self.updateLogo(rData[4]);
 			});
 		}, // End of sendData
 			
@@ -122,7 +124,7 @@ $(document).ready(function(){
 				       ];
 			self.updateGeochart(initData);
 		}, // End of initGeochart
-		initRelated: function(dataPos,dataNeg){
+		initRelated: function(){
 			var self = hook;
 			var posdata = [
 					{% autoescape off %}
@@ -142,6 +144,20 @@ $(document).ready(function(){
 			self.updateRelated(posdata,negdata);
 			//console.log('updateChart is called');
 		}, 
+		initLogo: function(){
+			var self = hook;
+			var logos = [
+					{% autoescape off %}
+					  {% for logo in logos %}
+					  ['{{logo.0}}','{{logo.1}}'],
+					  {% endfor %}
+					{% endautoescape %}
+					];
+
+			self.updateLogo(logos);
+			//console.log('updateChart is called');
+		}, 
+
 		updateGeochart: function(data){
 			var self = hook;	
 			var options = {
@@ -189,7 +205,7 @@ $(document).ready(function(){
 			var str = '';
 			str += "<b>Related Topics:</b><br/>";
 			for (var i = 0; i < dataPos.length; i++){
-				str = str + "<a href='" + dataPos[i][0] +"' target='_blank''>" + dataPos[i][1] + "</a><br/>";
+				str = str + "<a  href='" + dataPos[i][0] +"' target='_blank''>" + dataPos[i][1] + "</a>";
 			}
 			//str += "<br/> <b>Negative Related Topics:</b><br/>";
 			for (var i = 0; i < dataNeg.length; i++){
@@ -197,7 +213,17 @@ $(document).ready(function(){
 			}
 			related.html(str);
 			//console.log('updateChart is called');
+		},
+		updateLogo: function(logos){
+			var self = hook;
+			var str = '<b>Learn More From Relevant Organizations:</b><br/>';
+			for (var i = 0; i < logos.length; i++){
+				str = str + "<a href='http://" + logos[i][0] +"' target='_blank''>" + "<img src='/static/logo/" + logos[i][1] + "' height=120> </img>"  + "</a>";
+			}
+			logopane.html(str);
+			//console.log('updateChart is called');
 		}, 
+
 	}; // End of hook
 	var effect = {
 		onDocumentReady: function(){
@@ -347,6 +373,7 @@ $(document).ready(function(){
 			google.setOnLoadCallback(self.hook.initChart);
 			google.setOnLoadCallback(self.hook.initGeochart);
 			google.setOnLoadCallback(self.hook.initRelated);
+			google.setOnLoadCallback(self.hook.initLogo);
 		},
 	}
 	Pane.onDocumentReady();
@@ -514,11 +541,14 @@ $(document).ready(function(){
 		<br/>
 		<div id="related_div">
 		</div>
+		<div id="logopane_div">
+		</div>
 	</div>
+<!--
 	<h3><a href="#">Learn More</a></h3>
 	<div id="learn_more">
-		MORE INFO!
 	</div>
+-->
 	<h3><a href="#">Count Across U.S.</a></h3>
 	<div id="us">
 		<select name="yourfocus" id="yourfocus">

@@ -4,6 +4,7 @@ import sys
 try:
     from mine.models import Item
     from mine.models import URLtopic
+    from mine.models import Logo
 except:
     pass
 
@@ -12,6 +13,22 @@ if __name__ == "__main__":
     os.system('echo "no" | ./manage.py syncdb')
     os.system('echo "import init_db" | ./manage.py shell')
     sys.exit(0)
+
+
+os.system('wget http://www.aiksee.com/cous/data/collaborators.csv')
+csvReader = csv.reader(open('collaborators.csv', 'rb'), delimiter=',', quotechar='"')
+for row in csvReader:
+    print row
+    item = Logo()
+    item.name = row[0]
+    item.url = row[1]
+    item.attr = row[2]
+    item.logopath = row[3]
+    item.save() 
+os.system('rm collaborators.csv')
+
+
+
 
 os.system('wget http://www.aiksee.com/cous/data/url_topic.csv')
 csvReader = csv.reader(open('url_topic.csv', 'rb'), delimiter=',')
@@ -70,4 +87,7 @@ for row in csvReader:
     except:
         print "Error"
 os.system('rm result.dat')
+
+
+
 
