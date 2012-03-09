@@ -60,14 +60,8 @@ $(document).ready(function(){
 			chartData = new google.visualization.DataTable(); // Global: Use for updating chart
 			geoChart = new google.visualization.GeoChart(document.getElementById('map_div'));
 			geochartData = new google.visualization.DataTable();
-<<<<<<< HEAD
-=======
 			related = $("#related_div");
 			logopane = $("#logopane_div");
-<<<<<<< HEAD
->>>>>>> 0ef71fffd6b58581f3023dcb0ac29678e2823c3e
-=======
->>>>>>> 0ef71fffd6b58581f3023dcb0ac29678e2823c3e
 		}, // End of onDocumentReady
 		sendChange: function(sChange){
 			var self = hook;
@@ -220,12 +214,7 @@ $(document).ready(function(){
 			}
 			related.html(str);
 			//console.log('updateChart is called');
-<<<<<<< HEAD
-<<<<<<< HEAD
 		}
-=======
-=======
->>>>>>> 0ef71fffd6b58581f3023dcb0ac29678e2823c3e
 		},
 		updateLogo: function(logos){
 			var self = hook;
@@ -237,10 +226,6 @@ $(document).ready(function(){
 			//console.log('updateChart is called');
 		}, 
 
-<<<<<<< HEAD
->>>>>>> 0ef71fffd6b58581f3023dcb0ac29678e2823c3e
-=======
->>>>>>> 0ef71fffd6b58581f3023dcb0ac29678e2823c3e
 	}; // End of hook
 	var effect = {
 		onDocumentReady: function(){
@@ -390,16 +375,9 @@ $(document).ready(function(){
 			google.setOnLoadCallback(self.hook.initChart);
 			google.setOnLoadCallback(self.hook.initGeochart);
 			google.setOnLoadCallback(self.hook.initRelated);
-<<<<<<< HEAD
-<<<<<<< HEAD
-
 		}
-=======
-=======
->>>>>>> 0ef71fffd6b58581f3023dcb0ac29678e2823c3e
 			google.setOnLoadCallback(self.hook.initLogo);
 		},
->>>>>>> 0ef71fffd6b58581f3023dcb0ac29678e2823c3e
 	}
 	Pane.onDocumentReady();
 })(jQuery);
