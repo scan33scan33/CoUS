@@ -210,7 +210,7 @@ $(document).ready(function(){
 			var self = hook;
 			var related = $("#related_div");
 			var str = '';
-			str += "<b>Related Topics:</b><br/>";
+			str += "<b>Learn More from Relevant Topics:</b><br/>";
 			for (var i = 0; i < dataPos.length; i++){
 				str = str + "<a  href='" + dataPos[i][0] +"' target='_blank''>" + dataPos[i][1] + "</a>";
 			}
@@ -222,7 +222,7 @@ $(document).ready(function(){
 		},
 		updateLogo: function(logos){
 			var self = hook;
-			var str = '<b>Learn More From Relevant Organizations:</b><br/>';
+			var str = '<b>Learn More from Relevant Organizations:</b><br/>';
 			for (var i = 0; i < logos.length; i++){
 				str = str + "<a href='http://" + logos[i][0] +"' target='_blank''>" + "<img src='/static/logo/" + logos[i][1] + "' height=120> </img>"  + "</a>";
 			}
@@ -537,7 +537,7 @@ $(document).ready(function(){
 </div>
 
 <div id="accordion">
-	<h3><a href="#">Related Topics</a></h3>
+	<h3><a href="#">Learn More</a></h3>
 	<div id="related">
 		Selected Topic: 
 		<select name="yourtopic">

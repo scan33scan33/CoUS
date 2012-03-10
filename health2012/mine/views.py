@@ -172,7 +172,7 @@ def retrieve_company(attr):
     alllogos = Logo.objects.all()
     logos = []
     for logo in alllogos:
-        if logo.attr in attr and len(logo.logopath) > 1:
+        if logo.attr.lower() in attr.lower() and len(logo.logopath) > 1:
             logos.append([logo.url,logo.logopath])
     return logos
 
