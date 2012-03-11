@@ -193,19 +193,73 @@ def index(request):
     statelist = sorted([x[0] for x in statelist.values_list('state')[1:]])
 #    racelist = sorted([x[0] for x in racelist.values_list('attr')[1:]])
 
-    yourgender = "Male"
-    itsgender = "Female"
-
-    youredu = edulist[-1]
-    itsedu = edulist[-1]
-
-    yourrace = "Hispanic (of any race)"# "Black or African American only"
-    itsrace = "Non-Hispanic White"
+ 
+    yourgender = None
+    itsgender = None
+    youredu = None
+    itsedu = None
+    yourrace = None
+    itsrace = None
+    yourstate = None
+    itsstate = None
+    yourfocus = None
+    yourtopic = None
     
-    yourstate = "Connecticut"
-    itsstate = "Louisiana"
-    yourfocus = "1-1 Persons with health insurance"
-    yourtopic = "HIV"
+
+    mdata = {}
+    data = request.GET.get('data')
+    if data is not None:
+        for datum in data.split(';'):
+            arrs = datum.split('|')
+            mdata[arrs[0]] = arrs[1]
+
+        yourgender = mdata['yourgender']
+        itsgender = mdata['itsgender']
+        youredu = mdata['youredu']
+        itsedu = mdata['itsedu']
+        yourrace = mdata['yourrace']
+        itsrace = mdata['itsrace']
+        yourstate = mdata['yourstate']
+        itsstate = mdata['itsstate']
+        yourfocus = mdata['yourfocus']
+        yourtopic = mdata['yourtopic']
+    #
+#
+#    yourgender = request.GET.get('yourgender')
+#    itsgender = request.GET.get('itsgender')
+#    youredu = request.GET.get('youredu')
+#    itsedu = request.GET.get('itsedu')
+#    yourrace = request.GET.get('yourrace')
+#    itsrace = request.GET.get('itsrace')
+#    yourstate = request.GET.get('yourstate')
+#    itsstate = request.GET.get('itsstate')
+#    yourfocus = request.GET.get('yourfocus')
+#    yourtopic = request.GET.get('yourtopic')
+#
+    if itsedu is None:
+        itsedu = edulist[-1]
+    if youredu is None:
+        youredu = edulist[-1]
+    if itsgender is None:
+        itsgender = "Female"
+    if yourgender is None:
+        yourgender = "Male"
+    if itsrace is None:
+        itsrace = "Non-Hispanic White"
+    if yourrace is None:
+        yourrace = "Hispanic (of any race)"# "Black or African American only"
+    if yourstate is None:
+        yourstate = "Connecticut"
+    if itsstate is None:
+        itsstate = "Louisiana"
+    if yourfocus is None:
+        yourfocus = "1-1 Persons with health insurance"
+    if yourtopic is None:
+        yourtopic = "HIV"
+
+    # Set up for FB share
+    meta_title = yourstate + ' compared to ' + itsstate
+    meta_url = request.build_absolute_uri()
 
     #Check if it is just change #TODO
     try:
@@ -254,7 +308,7 @@ def index(request):
     postopics,negtopics = retrieve_corrtable(yourtopic,'')
     logos = retrieve_company(yourtopic)
 
-    c = Context({"yourstate":yourstate, "itsstate" : itsstate, "yourgender" : yourgender, "itsgender" : itsgender, "youredu" : youredu, "itsedu":itsedu, "yourrace": yourrace, "itsrace" : itsrace,'statelist' : statelist, 'racelist' : racelist, 'genderlist' : genderlist, 'edulist':edulist, "bars" : bars, "subfocuslist" : subfocuslist, "subfocuses" : subfocuses, "yourfocus" : yourfocus, "postopics" : postopics, "negtopics" : negtopics, "yourtopic" : yourtopic, "topiclist" : topiclist, "logos" : logos})
+    c = Context({"yourstate":yourstate, "itsstate" : itsstate, "yourgender" : yourgender, "itsgender" : itsgender, "youredu" : youredu, "itsedu":itsedu, "yourrace": yourrace, "itsrace" : itsrace,'statelist' : statelist, 'racelist' : racelist, 'genderlist' : genderlist, 'edulist':edulist, "bars" : bars, "subfocuslist" : subfocuslist, "subfocuses" : subfocuses, "yourfocus" : yourfocus, "postopics" : postopics, "negtopics" : negtopics, "yourtopic" : yourtopic, "topiclist" : topiclist, "logos" : logos, "t": meta_title, "url": meta_url })
     return HttpResponse(t.render(c))
 
 def field_filter(request):
@@ -450,3 +504,6 @@ def xml_parser(IP_ADDR):
 
 def video(request):
     return HttpResponseRedirect('http://youtu.be/IsrOg07_s9A')
+
+def share(request):
+    return render_to_response('mine/share.html', data)
