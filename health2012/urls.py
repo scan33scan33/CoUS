@@ -19,6 +19,7 @@ urlpatterns = patterns('',
     url(r'^mine/collaborators$', 'mine.views.collaborators'),
     url(r'^mine/pre_populate$', 'mine.views.pre_populate'),
     url(r'^mine/video$', 'mine.views.video'),
+    url(r'^mine/share/$', 'mine.views.share'),
     # url(r'^mine/$', 'health2012.views.home', name='home'),
     # url(r'^mine/health2012/', include('health2012.foo.urls')),
 

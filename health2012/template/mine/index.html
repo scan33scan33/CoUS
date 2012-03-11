@@ -9,11 +9,10 @@
 <link href="/static/jquery-ui-1.8.18.custom.css" rel="stylesheet" type="text/css" />
 <link href='http://fonts.googleapis.com/css?family=Fredericka+the+Great' rel='stylesheet' type='text/css'>
 
-<meta property="og:title" content="CountingOn.us"/>
-<meta property="og:type" content="health"/>
-<meta property="og:url" content="http://countingon.us/"/>
-<meta property="og:image" content="http://countingon.us/static/logo.png"/>
-<meta property="og:site_name" content="Counting On US"/>
+<meta property="og:locale" content="en_US" />
+<meta property="og:title" content="{{ t }}" />
+<meta property="og:image" content="http://countingon.us/static/logo.png" />
+<meta property="og:description" content="Counting On US is a peer-to-peer Leading Health Indicator database." />
 
 <script type="text/javascript">
       google.load('visualization', '1.0', {'packages':['corechart']});
@@ -58,7 +57,10 @@ $(document).ready(function(){
 					sChange.val = s.val();
 					self.sendChange(sChange);
 					self.sendData();
+					// FIXME: should bind to a general action
+					self.updateFBShare();
 				});
+				
 			});
 
 			// Global chart variables
@@ -68,7 +70,19 @@ $(document).ready(function(){
 			geochartData = new google.visualization.DataTable();
 			related = $("#related_div");
 			logopane = $("#logopane_div");
+
+			self.updateFBShare();
 		}, // End of onDocumentReady
+		updateFBShare: function(){
+			var self = hook;	       
+			var url = "https://www.facebook.com/sharer/sharer.php?u=" + "http://www.aiksee.com:8000/mine/" + "?data=";
+			var toadd = $('form').serialize();
+			toadd = toadd.replace(/\&/g,';');
+			toadd = toadd.replace(/\=/g,'|');
+			url += toadd;
+			console.log(url);
+			$('[name="fb_share"]').attr('href', url);
+		},
 		sendChange: function(sChange){
 			var self = hook;
 			$.post('field_filter', sChange, function(rData){
@@ -117,6 +131,7 @@ $(document).ready(function(){
 			chartData.addRows(data);
 			chart.draw(chartData, options);
 			console.log('updateChart is called');
+
 
 		}, // End of updateChart
 		initGeochart: function(){
@@ -328,6 +343,7 @@ $(document).ready(function(){
 					Pane.hook.updateGeochart(rData[1]);
 					Pane.hook.updateRelated(rData[2],rData[3]);
 					Pane.hook.updateListVal(rData[4]);
+					Pane.hook.updateFBShare();
 					$('#dialog_process').dialog('close');
 				},
 				statusCode:{
@@ -413,7 +429,7 @@ $(document).ready(function(){
 
 		<ul class="group" id="nav-bar">
             <li class="current_page_item">
-            	<a href="index">Home</a>
+            	<a href="">Home</a>
             </li>
             <li><a href="about">About</a></li>
             <li><a href="collaborators">Collaborators</a></li>
