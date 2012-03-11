@@ -75,7 +75,7 @@ $(document).ready(function(){
 		}, // End of onDocumentReady
 		updateFBShare: function(){
 			var self = hook;	       
-			var url = "https://www.facebook.com/sharer/sharer.php?u=" + "http://www.aiksee.com:8000/mine/" + "?data=";
+			var url = "https://www.facebook.com/sharer/sharer.php?u=" + "http://countingon.us/" + "?data=";
 			var toadd = $('form').serialize();
 			toadd = toadd.replace(/\&/g,';');
 			toadd = toadd.replace(/\=/g,'|');
@@ -548,6 +548,7 @@ $(document).ready(function(){
 	<div id="graphs">
 	<div id="chart_div"></div>
 	</div>
+	<a name="fb_share" target="_blank"><img src="/static/fb.png" style="width:5%; margin:0em 0em 1em 1.5em;"/></a>
 
 	<div id="sep"></div>
 </div>
