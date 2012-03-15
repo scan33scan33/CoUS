@@ -503,7 +503,7 @@ def xml_parser(IP_ADDR):
         return None
 
 def video(request):
-    return HttpResponseRedirect('http://youtu.be/IsrOg07_s9A')
+    return HttpResponseRedirect('http://youtu.be/q2Q06UBxMjA?hd=1')
 
 def share(request):
     return render_to_response('mine/share.html', data)
